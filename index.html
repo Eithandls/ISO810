@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sistema de Auto-determinación TSS - Ferretería Americana. Integración RH con la Tesorería de la Seguridad Social via SOAP/REST.">
+  <title>Ferretería Americana | Auto-determinación TSS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="autodeterminacion.css">
+</head>
+<body>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <svg viewBox="0 0 40 40" fill="none">
+            <rect width="40" height="40" rx="10" fill="url(#logoGrad)"/>
+            <path d="M12 14h16M12 20h16M12 26h10" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+            <defs><linearGradient id="logoGrad" x1="0" y1="0" x2="40" y2="40">
+              <stop stop-color="#f97316"/><stop offset="1" stop-color="#ea580c"/>
+            </linearGradient></defs>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <h1>Ferretería Americana</h1>
+          <span>Sistema de Recursos Humanos</span>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Principal</div>
+      <a href="#" class="nav-item active" data-section="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="#" class="nav-item" data-section="empleados">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Empleados</span>
+      </a>
+      <div class="nav-section-title">Integración TSS</div>
+      <a href="#" class="nav-item" data-section="autodeterminacion">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span>Auto-determinación</span>
+      </a>
+      <a href="#" class="nav-item" data-section="envio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <span>Envío SOAP/REST</span>
+      </a>
+      <a href="#" class="nav-item" data-section="historial">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Historial</span>
+      </a>
+      <div class="nav-section-title">Sistema</div>
+      <a href="#" class="nav-item" data-section="arquitectura">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Arquitectura</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">CM</div>
+        <div>
+          <div class="user-name">Carlos Méndez</div>
+          <div class="user-role">Administrador RH</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content" id="mainContent">
+
+    <!-- ===== TOP BAR ===== -->
+    <header class="top-bar">
+      <button class="menu-toggle" id="menuToggle" aria-label="Alternar menú">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="breadcrumb" id="breadcrumb">
+        <span>RH</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>
+        <span class="breadcrumb-current">Dashboard</span>
+      </div>
+      <div class="top-bar-right">
+        <a href="farmacia_carol.html" class="project-switch-btn" style="display:inline-flex; align-items:center; gap:8px; padding:6px 14px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; border-radius:8px; text-decoration:none; font-size:0.82rem; font-weight:600; box-shadow:0 2px 8px rgba(16,185,129,0.3); transition:all 0.2s;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 2L12 8M8 4H16M3 12h18M5 12v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"/><line x1="9" y1="16" x2="15" y2="16"/></svg>
+          <span>Farmacia Carol (Facturación & CxC)</span>
+        </a>
+        <div class="period-selector">
+          <label for="periodoSelect">Período:</label>
+          <select id="periodoSelect">
+            <option value="202609" selected>Septiembre 2026</option>
+            <option value="202608">Agosto 2026</option>
+            <option value="202607">Julio 2026</option>
+          </select>
+        </div>
+        <div class="connection-status" id="connectionStatus">
+          <span class="status-dot online"></span>
+          <span>TSS Conectado</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== SECTION: DASHBOARD ===== -->
+    <section class="content-section active" id="section-dashboard">
+      <div class="section-header">
+        <h2>Dashboard de Auto-determinación</h2>
+        <p>Resumen del período de nómina actual y estado de integración con la TSS</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card stat-primary">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value" id="statEmpleados">5</span>
+            <span class="stat-label">Empleados Activos</span>
+          </div>
+          <div class="stat-trend up">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+            +1 este mes
+          </div>
+        </div>
+        <div class="stat-card stat-success">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value" id="statSalarios">RD$ 225,000</span>
+            <span class="stat-label">Total Salarios Cotizables</span>
+          </div>
+        </div>
+        <div class="stat-card stat-warning">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value" id="statAportes">RD$ 47,993</span>
+            <span class="stat-label">Monto Total SDSS</span>
+          </div>
+          <div class="stat-breakdown">
+            <span>SFS: 22,838</span>
+            <span>AFP: 22,500</span>
+            <span>SRL: 2,655</span>
+          </div>
+        </div>
+        <div class="stat-card stat-info">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value" id="statEstado">Pendiente</span>
+            <span class="stat-label">Estado del Envío</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Novedades del período -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Novedades del Período — Septiembre 2026</h3>
+          <span class="badge badge-info">3 novedades</span>
+        </div>
+        <div class="card-body">
+          <div class="novedades-timeline">
+            <div class="novedad-item ingreso">
+              <div class="novedad-icon">IN</div>
+              <div class="novedad-content">
+                <strong>José Miguel Pérez Santos</strong>
+                <p>Ingreso — Cédula: 402-1234567-8 — Salario: RD$ 30,000.00</p>
+                <span class="novedad-date">15 Sep 2026</span>
+              </div>
+            </div>
+            <div class="novedad-item salida">
+              <div class="novedad-icon">SA</div>
+              <div class="novedad-content">
+                <strong>Ana Luisa Marte Féliz</strong>
+                <p>Salida / Desahucio — Cédula: 223-0067890-1 — Prestaciones: RD$ 58,333.33</p>
+                <span class="novedad-date">20 Sep 2026</span>
+              </div>
+            </div>
+            <div class="novedad-item aumento">
+              <div class="novedad-icon">NR</div>
+              <div class="novedad-content">
+                <strong>Roberto Carlos Fernández De la Cruz</strong>
+                <p>Comisiones variables — Total cotizable: RD$ 55,000.00 + Comisiones: RD$ 13,000.00</p>
+                <span class="novedad-date">30 Sep 2026</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION: EMPLEADOS ===== -->
+    <section class="content-section" id="section-empleados">
+      <div class="section-header">
+        <h2>Nómina de Empleados</h2>
+        <p>Trabajadores registrados en el Sistema de Seguridad Social</p>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Detalle de Empleados — Período 202609</h3>
+          <div class="card-actions">
+            <button class="btn btn-outline btn-sm" onclick="exportarTabla()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Exportar
+            </button>
+          </div>
+        </div>
+        <div class="card-body table-responsive">
+          <table class="data-table" id="tablaEmpleados">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Doc</th>
+                <th>Número</th>
+                <th>Nombre Completo</th>
+                <th>Novedad</th>
+                <th>Tipo</th>
+                <th>Salario Cot.</th>
+                <th>SFS</th>
+                <th>AFP</th>
+                <th>SRL</th>
+                <th>Total SDSS</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyEmpleados">
+              <!-- Se llena por JS -->
+            </tbody>
+            <tfoot id="tfootEmpleados">
+              <!-- Totales -->
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION: AUTO-DETERMINACIÓN ===== -->
+    <section class="content-section" id="section-autodeterminacion">
+      <div class="section-header">
+        <h2>Generar Auto-determinación</h2>
+        <p>Genera el archivo XML validado para envío a la TSS vía SUIR Plus</p>
+      </div>
+
+      <div class="workflow-steps">
+        <div class="workflow-step completed" id="step1">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h4>Cierre de Nómina</h4>
+            <p>Período cerrado</p>
+          </div>
+        </div>
+        <div class="workflow-connector"></div>
+        <div class="workflow-step active" id="step2">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h4>Generar XML</h4>
+            <p>Auto-determinación</p>
+          </div>
+        </div>
+        <div class="workflow-connector"></div>
+        <div class="workflow-step" id="step3">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h4>Validar</h4>
+            <p>Estructura XSD</p>
+          </div>
+        </div>
+        <div class="workflow-connector"></div>
+        <div class="workflow-step" id="step4">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h4>Enviar</h4>
+            <p>Web Service SOAP</p>
+          </div>
+        </div>
+        <div class="workflow-connector"></div>
+        <div class="workflow-step" id="step5">
+          <div class="step-number">5</div>
+          <div class="step-content">
+            <h4>Confirmación</h4>
+            <p>Número de recibo</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="generation-panel">
+        <div class="card">
+          <div class="card-header">
+            <h3>Configuración del Envío</h3>
+          </div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="rnc">RNC Empleador</label>
+                <input type="text" id="rnc" value="131456789" readonly>
+              </div>
+              <div class="form-group">
+                <label for="razonSocial">Razón Social</label>
+                <input type="text" id="razonSocial" value="Ferretería Americana, S.R.L." readonly>
+              </div>
+              <div class="form-group">
+                <label for="periodo">Período</label>
+                <input type="text" id="periodo" value="202609" readonly>
+              </div>
+              <div class="form-group">
+                <label for="moneda">Moneda</label>
+                <input type="text" id="moneda" value="DOP" readonly>
+              </div>
+            </div>
+            <div class="action-bar">
+              <button class="btn btn-primary btn-lg" id="btnGenerar" onclick="generarXML()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Generar XML de Auto-determinación
+              </button>
+              <button class="btn btn-outline btn-lg" id="btnValidar" onclick="validarXML()" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Validar contra XSD
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- XML Preview -->
+        <div class="card" id="xmlPreviewCard" style="display:none;">
+          <div class="card-header">
+            <h3>Vista Previa del XML Generado</h3>
+            <div class="card-actions">
+              <button class="btn btn-sm btn-outline" onclick="copiarXML()">Copiar XML</button>
+              <button class="btn btn-sm btn-outline" onclick="descargarXML()">Descargar</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <pre class="xml-preview" id="xmlPreview"></pre>
+          </div>
+        </div>
+
+        <!-- Validation Results -->
+        <div class="card" id="validationCard" style="display:none;">
+          <div class="card-header">
+            <h3>Resultado de Validación</h3>
+          </div>
+          <div class="card-body" id="validationResults">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION: ENVÍO SOAP/REST ===== -->
+    <section class="content-section" id="section-envio">
+      <div class="section-header">
+        <h2>Envío a la TSS — Web Service SOAP</h2>
+        <p>Transmisión del archivo de Auto-determinación mediante servicio web</p>
+      </div>
+
+      <div class="protocol-tabs">
+        <button class="protocol-tab active" data-protocol="soap" onclick="switchProtocol('soap')">
+          <span class="protocol-badge">SOAP 1.1</span>
+          Documento/Literal
+        </button>
+        <button class="protocol-tab" data-protocol="rest" onclick="switchProtocol('rest')">
+          <span class="protocol-badge rest">REST</span>
+          JSON / API
+        </button>
+      </div>
+
+      <!-- SOAP Panel -->
+      <div class="protocol-panel active" id="panel-soap">
+        <div class="card">
+          <div class="card-header">
+            <h3>Envelope SOAP — EnviarAutodeterminacion</h3>
+            <span class="badge badge-primary">POST</span>
+          </div>
+          <div class="card-body">
+            <div class="endpoint-bar">
+              <span class="method-badge">POST</span>
+              <code>https://rh.ferreteriaamericana.com.do/ws/autodeterminacion</code>
+            </div>
+            <div class="soap-container">
+              <div class="soap-section">
+                <h4>Request SOAP Envelope</h4>
+                <pre class="xml-preview soap-request" id="soapRequest"></pre>
+              </div>
+              <div class="soap-section">
+                <h4>Response SOAP Envelope</h4>
+                <pre class="xml-preview soap-response" id="soapResponse">
+                  <!-- Se llena al hacer envío -->
+                </pre>
+              </div>
+            </div>
+            <div class="action-bar">
+              <button class="btn btn-primary btn-lg" id="btnEnviarSOAP" onclick="enviarSOAP()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Enviar vía SOAP
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REST Panel -->
+      <div class="protocol-panel" id="panel-rest">
+        <div class="card">
+          <div class="card-header">
+            <h3>API REST — Enviar Autodeterminación</h3>
+            <span class="badge badge-success">REST</span>
+          </div>
+          <div class="card-body">
+            <div class="endpoint-bar">
+              <span class="method-badge post">POST</span>
+              <code>https://api.ferreteriaamericana.com.do/v1/autodeterminacion</code>
+            </div>
+            <div class="rest-headers">
+              <h4>Headers</h4>
+              <pre class="code-block">{
+  "Content-Type": "application/json",
+  "Authorization": "Bearer eyJhbGciOiJSUzI1NiIs...",
+  "X-RNC": "131456789",
+  "X-Request-ID": "uuid-generated"
+}</pre>
+            </div>
+            <div class="soap-container">
+              <div class="soap-section">
+                <h4>Request Body (JSON)</h4>
+                <pre class="xml-preview" id="restRequest"></pre>
+              </div>
+              <div class="soap-section">
+                <h4>Response (JSON)</h4>
+                <pre class="xml-preview" id="restResponse"></pre>
+              </div>
+            </div>
+            <div class="action-bar">
+              <button class="btn btn-primary btn-lg" onclick="enviarREST()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Enviar vía REST API
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION: HISTORIAL ===== -->
+    <section class="content-section" id="section-historial">
+      <div class="section-header">
+        <h2>Historial de Envíos</h2>
+        <p>Registro de todas las transmisiones realizadas a la TSS</p>
+      </div>
+      <div class="card">
+        <div class="card-body table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>No. Confirmación</th>
+                <th>Período</th>
+                <th>Fecha Envío</th>
+                <th>Protocolo</th>
+                <th>Empleados</th>
+                <th>Monto Total</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyHistorial">
+              <tr>
+                <td><code>TSS-2026-08-00451</code></td>
+                <td>202608</td>
+                <td>2026-08-30 16:45</td>
+                <td><span class="badge badge-primary">SOAP</span></td>
+                <td>4</td>
+                <td>RD$ 42,150.00</td>
+                <td><span class="status-pill accepted">Aceptado</span></td>
+              </tr>
+              <tr>
+                <td><code>TSS-2026-07-00389</code></td>
+                <td>202607</td>
+                <td>2026-07-31 15:20</td>
+                <td><span class="badge badge-primary">SOAP</span></td>
+                <td>4</td>
+                <td>RD$ 41,800.00</td>
+                <td><span class="status-pill accepted">Aceptado</span></td>
+              </tr>
+              <tr>
+                <td><code>TSS-2026-06-00312</code></td>
+                <td>202606</td>
+                <td>2026-06-29 14:10</td>
+                <td><span class="badge badge-success">REST</span></td>
+                <td>4</td>
+                <td>RD$ 41,800.00</td>
+                <td><span class="status-pill accepted">Aceptado</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION: ARQUITECTURA ===== -->
+    <section class="content-section" id="section-arquitectura">
+      <div class="section-header">
+        <h2>Arquitectura de Integración</h2>
+        <p>Diagrama y justificación técnica de los componentes utilizados</p>
+      </div>
+
+      <div class="architecture-grid">
+        <!-- Diagrama visual -->
+        <div class="card arch-diagram-card">
+          <div class="card-header">
+            <h3>Diagrama de Arquitectura</h3>
+          </div>
+          <div class="card-body">
+            <div class="arch-diagram">
+              <!-- Capa 1: Sistema RH -->
+              <div class="arch-layer layer-rh">
+                <div class="layer-title">Sistema RH — Ferretería Americana</div>
+                <div class="arch-components">
+                  <div class="arch-component">
+                    <div class="component-icon rh">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    </div>
+                    <span>Módulo de Nómina</span>
+                  </div>
+                  <div class="arch-arrow">→</div>
+                  <div class="arch-component">
+                    <div class="component-icon rh">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    </div>
+                    <span>Generador XML/JSON</span>
+                  </div>
+                  <div class="arch-arrow">→</div>
+                  <div class="arch-component">
+                    <div class="component-icon rh">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
+                    <span>Validador XSD</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Capa 2: Middleware -->
+              <div class="arch-layer-connector">
+                <div class="connector-line"></div>
+                <div class="connector-label">SOAP/REST (HTTPS + TLS 1.3)</div>
+                <div class="connector-line"></div>
+              </div>
+
+              <div class="arch-layer layer-middleware">
+                <div class="layer-title">Middleware / ESB (Bus de Servicios)</div>
+                <div class="arch-components">
+                  <div class="arch-component">
+                    <div class="component-icon mw">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    </div>
+                    <span>WSDL Contract</span>
+                  </div>
+                  <div class="arch-arrow">→</div>
+                  <div class="arch-component">
+                    <div class="component-icon mw">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <span>Autenticación & Cifrado</span>
+                  </div>
+                  <div class="arch-arrow">→</div>
+                  <div class="arch-component">
+                    <div class="component-icon mw">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                    </div>
+                    <span>Transformación XSLT</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Capa 3: TSS -->
+              <div class="arch-layer-connector">
+                <div class="connector-line"></div>
+                <div class="connector-label">Archivo Estructurado (SUIR Plus)</div>
+                <div class="connector-line"></div>
+              </div>
+
+              <div class="arch-layer layer-tss">
+                <div class="layer-title">TSS — SUIR Plus (Gobierno RD)</div>
+                <div class="arch-components">
+                  <div class="arch-component">
+                    <div class="component-icon tss">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                    </div>
+                    <span>Base de Datos SDSS</span>
+                  </div>
+                  <div class="arch-arrow">→</div>
+                  <div class="arch-component">
+                    <div class="component-icon tss">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <span>SFS / AFP / SRL</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Justificación -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Justificación Técnica</h3>
+          </div>
+          <div class="card-body">
+            <div class="justification-list">
+              <div class="justification-item">
+                <div class="just-icon soap-icon">SOAP</div>
+                <div class="just-content">
+                  <h4>¿Por qué SOAP como protocolo principal?</h4>
+                  <p>Se selecciona SOAP 1.1 (Document/Literal) por ser el estándar en integraciones con entidades gubernamentales dominicanas. El WSDL actúa como <strong>contrato formal</strong> entre ambos sistemas, garantizando validación de tipos mediante XSD, integridad del mensaje, y trazabilidad con WS-Security. La TSS, al ser una entidad del SDSS, requiere formatos estrictos y auditables.</p>
+                </div>
+              </div>
+              <div class="justification-item">
+                <div class="just-icon rest-icon">REST</div>
+                <div class="just-content">
+                  <h4>¿Por qué también REST como alternativa?</h4>
+                  <p>Se ofrece un endpoint REST/JSON como canal alternativo para facilitar integraciones modernas con aplicaciones móviles y dashboards en tiempo real. La conversión JSON↔XML se realiza en el middleware, manteniendo la compatibilidad con el esquema XSD de la TSS.</p>
+                </div>
+              </div>
+              <div class="justification-item">
+                <div class="just-icon xsd-icon">XSD</div>
+                <div class="just-content">
+                  <h4>¿Por qué XSD como tecnología de validación?</h4>
+                  <p>El esquema <code>AutodeterminacionTSS.xsd</code> define restricciones precisas (patterns para RNC/cédula, enumeraciones para tipo de novedad, totales de control) que permiten validar la estructura <strong>antes del envío</strong>, reduciendo rechazos por parte del SUIR Plus. Sigue la misma filosofía de la asignación anterior (AsientoActivosFijos.xsd).</p>
+                </div>
+              </div>
+              <div class="justification-item">
+                <div class="just-icon mw-icon">ESB</div>
+                <div class="just-content">
+                  <h4>¿Por qué un Middleware/ESB intermediario?</h4>
+                  <p>El bus de servicios desacopla el sistema RH propietario de la TSS, permitiendo: (1) transformación XSLT del XML propietario al formato SUIR, (2) autenticación centralizada con WS-Security, (3) retry automático ante fallos de red, (4) logging de auditoría para fines fiscales (Ley 87-01).</p>
+                </div>
+              </div>
+              <div class="justification-item">
+                <div class="just-icon sec-icon">TLS</div>
+                <div class="just-content">
+                  <h4>¿Por qué HTTPS/TLS 1.3?</h4>
+                  <p>La información transmitida incluye datos personales sensibles (cédulas, salarios, NSS) protegidos por la Ley 172-13 de Protección de Datos Personales de RD. Se utiliza TLS 1.3 con certificados X.509 para cifrado en tránsito y autenticación mutua (mTLS) entre el sistema RH y la TSS.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabla de tasas -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Tasas de Cotización SDSS Vigentes (Ley 87-01)</h3>
+          </div>
+          <div class="card-body table-responsive">
+            <table class="data-table rates-table">
+              <thead>
+                <tr>
+                  <th>Concepto</th>
+                  <th>Empleador</th>
+                  <th>Trabajador</th>
+                  <th>Total</th>
+                  <th>Tope Salarial</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>SFS</strong> — Seguro Familiar de Salud</td>
+                  <td>7.09%</td>
+                  <td>3.04%</td>
+                  <td>10.13%</td>
+                  <td>10 salarios mínimos</td>
+                </tr>
+                <tr>
+                  <td><strong>AFP</strong> — Fondo de Pensiones</td>
+                  <td>7.10%</td>
+                  <td>2.87%</td>
+                  <td>9.97%</td>
+                  <td>20 salarios mínimos</td>
+                </tr>
+                <tr>
+                  <td><strong>SRL</strong> — Seguro de Riesgos Laborales</td>
+                  <td>1.18%*</td>
+                  <td>—</td>
+                  <td>1.18%</td>
+                  <td>4 salarios mínimos</td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="table-note">* La tasa del SRL varía según la categoría de riesgo de la actividad económica (1.00% – 1.60%). Para comercio al por menor: 1.18%.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast notifications -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="autodeterminacion.js"></script>
+</body>
+</html>

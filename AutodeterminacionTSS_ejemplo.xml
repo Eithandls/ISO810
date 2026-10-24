@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Ejemplo: Archivo de Autodeterminación generado por el Sistema de RH
+           de Ferretería Americana para envío a la TSS vía SUIR Plus.
+  Período: Septiembre 2026
+  Nota:    Los datos son ficticios con fines académicos.
+-->
+<AutodeterminacionTSS xmlns="http://www.ferreteriaamericana.com.do/rh/autodeterminacion"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://www.ferreteriaamericana.com.do/rh/autodeterminacion AutodeterminacionTSS.xsd"
+                      sistemaOrigen="RRHH_FERRETERIA_AMERICANA"
+                      periodo="202609"
+                      fechaGeneracion="2026-09-30T23:59:00"
+                      moneda="DOP"
+                      version="1.0"
+                      estado="PENDIENTE">
+
+  <!-- ======================== EMPLEADOR ======================== -->
+  <Empleador>
+    <RNC>131456789</RNC>
+    <RazonSocial>Ferretería Americana, S.R.L.</RazonSocial>
+    <NombreComercial>Ferretería Americana</NombreComercial>
+    <SectorEconomico>Comercio al por menor de artículos de ferretería</SectorEconomico>
+    <RepresentanteLegal>Carlos Antonio Méndez Reyes</RepresentanteLegal>
+  </Empleador>
+
+  <!-- ====================== TRABAJADORES ====================== -->
+  <Trabajadores>
+
+    <!-- Trabajador 1: Empleado fijo, sin novedad -->
+    <Trabajador secuencia="1">
+      <TipoDocumento>C</TipoDocumento>
+      <NumeroDocumento>00114725836</NumeroDocumento>
+      <NSS>201456789</NSS>
+      <Nombres>María Isabel</Nombres>
+      <Apellido1>García</Apellido1>
+      <Apellido2>Rodríguez</Apellido2>
+      <Sexo>F</Sexo>
+      <FechaNacimiento>1988-05-14</FechaNacimiento>
+      <FechaIngreso>2019-03-01</FechaIngreso>
+      <TipoNovedad>NR</TipoNovedad>
+      <TipoIngreso>F</TipoIngreso>
+      <InformacionSalarial>
+        <SalarioCotizableSDSS>45000.00</SalarioCotizableSDSS>
+        <SalarioISR>45000.00</SalarioISR>
+        <SalarioINFOTEP>45000.00</SalarioINFOTEP>
+        <OtrasRemuneraciones>0.00</OtrasRemuneraciones>
+        <HorasExtraordinarias>0.00</HorasExtraordinarias>
+        <Comisiones>0.00</Comisiones>
+        <Incentivos>0.00</Incentivos>
+        <Vacaciones>0.00</Vacaciones>
+        <RegaliaPascual>0.00</RegaliaPascual>
+        <IngresosExentos>0.00</IngresosExentos>
+      </InformacionSalarial>
+      <Aportes>
+        <SFS_Empleador>3195.00</SFS_Empleador>
+        <SFS_Trabajador>1372.50</SFS_Trabajador>
+        <SFS_Total>4567.50</SFS_Total>
+        <AFP_Empleador>3217.50</AFP_Empleador>
+        <AFP_Trabajador>1282.50</AFP_Trabajador>
+        <AFP_Total>4500.00</AFP_Total>
+        <SRL_Empleador>531.00</SRL_Empleador>
+      </Aportes>
+    </Trabajador>
+
+    <!-- Trabajador 2: Ingreso nuevo este mes -->
+    <Trabajador secuencia="2">
+      <TipoDocumento>C</TipoDocumento>
+      <NumeroDocumento>40212345678</NumeroDocumento>
+      <NSS>201987654</NSS>
+      <Nombres>José Miguel</Nombres>
+      <Apellido1>Pérez</Apellido1>
+      <Apellido2>Santos</Apellido2>
+      <Sexo>M</Sexo>
+      <FechaNacimiento>1995-11-20</FechaNacimiento>
+      <FechaIngreso>2026-09-15</FechaIngreso>
+      <TipoNovedad>IN</TipoNovedad>
+      <TipoIngreso>F</TipoIngreso>
+      <InformacionSalarial>
+        <SalarioCotizableSDSS>30000.00</SalarioCotizableSDSS>
+        <SalarioISR>30000.00</SalarioISR>
+        <SalarioINFOTEP>30000.00</SalarioINFOTEP>
+        <OtrasRemuneraciones>0.00</OtrasRemuneraciones>
+        <HorasExtraordinarias>0.00</HorasExtraordinarias>
+        <Comisiones>0.00</Comisiones>
+        <Incentivos>0.00</Incentivos>
+        <Vacaciones>0.00</Vacaciones>
+        <RegaliaPascual>0.00</RegaliaPascual>
+        <IngresosExentos>0.00</IngresosExentos>
+      </InformacionSalarial>
+      <Aportes>
+        <SFS_Empleador>2130.00</SFS_Empleador>
+        <SFS_Trabajador>915.00</SFS_Trabajador>
+        <SFS_Total>3045.00</SFS_Total>
+        <AFP_Empleador>2145.00</AFP_Empleador>
+        <AFP_Trabajador>855.00</AFP_Trabajador>
+        <AFP_Total>3000.00</AFP_Total>
+        <SRL_Empleador>354.00</SRL_Empleador>
+      </Aportes>
+    </Trabajador>
+
+    <!-- Trabajador 3: Salida / desahucio -->
+    <Trabajador secuencia="3">
+      <TipoDocumento>C</TipoDocumento>
+      <NumeroDocumento>22300678901</NumeroDocumento>
+      <NSS>201234567</NSS>
+      <Nombres>Ana Luisa</Nombres>
+      <Apellido1>Marte</Apellido1>
+      <Apellido2>Féliz</Apellido2>
+      <Sexo>F</Sexo>
+      <FechaNacimiento>1990-02-10</FechaNacimiento>
+      <FechaIngreso>2020-06-01</FechaIngreso>
+      <FechaSalida>2026-09-20</FechaSalida>
+      <TipoNovedad>SA</TipoNovedad>
+      <TipoIngreso>F</TipoIngreso>
+      <InformacionSalarial>
+        <SalarioCotizableSDSS>35000.00</SalarioCotizableSDSS>
+        <SalarioISR>35000.00</SalarioISR>
+        <SalarioINFOTEP>35000.00</SalarioINFOTEP>
+        <OtrasRemuneraciones>0.00</OtrasRemuneraciones>
+        <HorasExtraordinarias>2500.00</HorasExtraordinarias>
+        <Comisiones>0.00</Comisiones>
+        <Incentivos>0.00</Incentivos>
+        <Vacaciones>0.00</Vacaciones>
+        <RegaliaPascual>0.00</RegaliaPascual>
+        <IngresosExentos>58333.33</IngresosExentos>
+      </InformacionSalarial>
+      <Aportes>
+        <SFS_Empleador>2485.00</SFS_Empleador>
+        <SFS_Trabajador>1067.50</SFS_Trabajador>
+        <SFS_Total>3552.50</SFS_Total>
+        <AFP_Empleador>2502.50</AFP_Empleador>
+        <AFP_Trabajador>997.50</AFP_Trabajador>
+        <AFP_Total>3500.00</AFP_Total>
+        <SRL_Empleador>413.00</SRL_Empleador>
+      </Aportes>
+    </Trabajador>
+
+    <!-- Trabajador 4: Empleado variable con comisiones -->
+    <Trabajador secuencia="4">
+      <TipoDocumento>C</TipoDocumento>
+      <NumeroDocumento>05600123456</NumeroDocumento>
+      <NSS>201567890</NSS>
+      <Nombres>Roberto Carlos</Nombres>
+      <Apellido1>Fernández</Apellido1>
+      <Apellido2>De la Cruz</Apellido2>
+      <Sexo>M</Sexo>
+      <FechaNacimiento>1985-08-25</FechaNacimiento>
+      <FechaIngreso>2018-01-15</FechaIngreso>
+      <TipoNovedad>NR</TipoNovedad>
+      <TipoIngreso>V</TipoIngreso>
+      <InformacionSalarial>
+        <SalarioCotizableSDSS>55000.00</SalarioCotizableSDSS>
+        <SalarioISR>68000.00</SalarioISR>
+        <SalarioINFOTEP>55000.00</SalarioINFOTEP>
+        <OtrasRemuneraciones>0.00</OtrasRemuneraciones>
+        <HorasExtraordinarias>0.00</HorasExtraordinarias>
+        <Comisiones>13000.00</Comisiones>
+        <Incentivos>0.00</Incentivos>
+        <Vacaciones>0.00</Vacaciones>
+        <RegaliaPascual>0.00</RegaliaPascual>
+        <IngresosExentos>0.00</IngresosExentos>
+      </InformacionSalarial>
+      <Aportes>
+        <SFS_Empleador>3905.00</SFS_Empleador>
+        <SFS_Trabajador>1677.50</SFS_Trabajador>
+        <SFS_Total>5582.50</SFS_Total>
+        <AFP_Empleador>3932.50</AFP_Empleador>
+        <AFP_Trabajador>1567.50</AFP_Trabajador>
+        <AFP_Total>5500.00</AFP_Total>
+        <SRL_Empleador>649.00</SRL_Empleador>
+      </Aportes>
+    </Trabajador>
+
+    <!-- Trabajador 5: Extranjero con pasaporte -->
+    <Trabajador secuencia="5">
+      <TipoDocumento>P</TipoDocumento>
+      <NumeroDocumento>AB1234567</NumeroDocumento>
+      <NSS>201345678</NSS>
+      <Nombres>Jean Pierre</Nombres>
+      <Apellido1>Duvalier</Apellido1>
+      <Sexo>M</Sexo>
+      <FechaNacimiento>1992-07-03</FechaNacimiento>
+      <FechaIngreso>2022-04-10</FechaIngreso>
+      <TipoNovedad>NR</TipoNovedad>
+      <TipoIngreso>F</TipoIngreso>
+      <InformacionSalarial>
+        <SalarioCotizableSDSS>60000.00</SalarioCotizableSDSS>
+        <SalarioISR>60000.00</SalarioISR>
+        <SalarioINFOTEP>60000.00</SalarioINFOTEP>
+        <OtrasRemuneraciones>0.00</OtrasRemuneraciones>
+        <HorasExtraordinarias>3500.00</HorasExtraordinarias>
+        <Comisiones>0.00</Comisiones>
+        <Incentivos>5000.00</Incentivos>
+        <Vacaciones>0.00</Vacaciones>
+        <RegaliaPascual>0.00</RegaliaPascual>
+        <IngresosExentos>0.00</IngresosExentos>
+      </InformacionSalarial>
+      <Aportes>
+        <SFS_Empleador>4260.00</SFS_Empleador>
+        <SFS_Trabajador>1830.00</SFS_Trabajador>
+        <SFS_Total>6090.00</SFS_Total>
+        <AFP_Empleador>4290.00</AFP_Empleador>
+        <AFP_Trabajador>1710.00</AFP_Trabajador>
+        <AFP_Total>6000.00</AFP_Total>
+        <SRL_Empleador>708.00</SRL_Empleador>
+      </Aportes>
+    </Trabajador>
+
+  </Trabajadores>
+
+  <!-- =================== TOTALES DE CONTROL =================== -->
+  <TotalesControl>
+    <CantidadTrabajadores>5</CantidadTrabajadores>
+    <TotalSalariosCotizables>225000.00</TotalSalariosCotizables>
+    <TotalAporteSFS>22837.50</TotalAporteSFS>
+    <TotalAporteAFP>22500.00</TotalAporteAFP>
+    <TotalAporteSRL>2655.00</TotalAporteSRL>
+    <TotalAporteEmpleador>33920.50</TotalAporteEmpleador>
+    <TotalAporteTrabajador>13276.00</TotalAporteTrabajador>
+    <MontoTotalSDSS>47992.50</MontoTotalSDSS>
+  </TotalesControl>
+
+</AutodeterminacionTSS>

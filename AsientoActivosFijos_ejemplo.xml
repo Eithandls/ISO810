@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LoteAsientos xmlns="http://www.madeco.com.do/contabilidad/asientos"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.madeco.com.do/contabilidad/asientos AsientoActivosFijos.xsd"
+              sistemaOrigen="ACTIVOS_FIJOS"
+              compania="MADECO"
+              fechaGeneracion="2026-09-30T18:45:00"
+              moneda="DOP"
+              cantidadAsientos="2">
+
+  <!-- Asiento 1: Depreciación mensual -->
+  <Asiento>
+    <NumeroAsiento>AF-2026-000123</NumeroAsiento>
+    <Descripcion>Depreciación de activos fijos - Septiembre 2026</Descripcion>
+    <Fecha>2026-09-30</Fecha>
+    <Movimientos>
+      <Movimiento linea="1">
+        <Cuenta>6-1-05-001</Cuenta>
+        <TipoMovimiento>DB</TipoMovimiento>
+        <Monto>45000.00</Monto>
+        <DescripcionLinea>Gasto depreciación maquinaria</DescripcionLinea>
+      </Movimiento>
+      <Movimiento linea="2">
+        <Cuenta>6-1-05-002</Cuenta>
+        <TipoMovimiento>DB</TipoMovimiento>
+        <Monto>12500.00</Monto>
+        <DescripcionLinea>Gasto depreciación vehículos</DescripcionLinea>
+      </Movimiento>
+      <Movimiento linea="3">
+        <Cuenta>1-2-09-001</Cuenta>
+        <TipoMovimiento>CR</TipoMovimiento>
+        <Monto>45000.00</Monto>
+        <DescripcionLinea>Depreciación acumulada maquinaria</DescripcionLinea>
+      </Movimiento>
+      <Movimiento linea="4">
+        <Cuenta>1-2-09-002</Cuenta>
+        <TipoMovimiento>CR</TipoMovimiento>
+        <Monto>12500.00</Monto>
+        <DescripcionLinea>Depreciación acumulada vehículos</DescripcionLinea>
+      </Movimiento>
+    </Movimientos>
+    <Totales>
+      <TotalDebito>57500.00</TotalDebito>
+      <TotalCredito>57500.00</TotalCredito>
+    </Totales>
+  </Asiento>
+
+  <!-- Asiento 2: Adquisición de un activo -->
+  <Asiento>
+    <NumeroAsiento>AF-2026-000124</NumeroAsiento>
+    <Descripcion>Compra de sierra industrial a crédito</Descripcion>
+    <Fecha>2026-09-30</Fecha>
+    <Movimientos>
+      <Movimiento linea="1">
+        <Cuenta>1-2-03-002</Cuenta>
+        <TipoMovimiento>DB</TipoMovimiento>
+        <Monto>350000.00</Monto>
+        <CodigoActivo>MAQ-0457</CodigoActivo>
+      </Movimiento>
+      <Movimiento linea="2">
+        <Cuenta>2-1-01-001</Cuenta>
+        <TipoMovimiento>CR</TipoMovimiento>
+        <Monto>350000.00</Monto>
+      </Movimiento>
+    </Movimientos>
+    <Totales>
+      <TotalDebito>350000.00</TotalDebito>
+      <TotalCredito>350000.00</TotalCredito>
+    </Totales>
+  </Asiento>
+
+</LoteAsientos>

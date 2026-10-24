@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Farmacia Carol — Sistema integrado de Facturación y Cuentas por Cobrar con Triggers, Stored Procedures, Secuencias y Vistas de Base de Datos.">
+  <title>Farmacia Carol | Facturación & Cuentas x Cobrar — Integración con Triggers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="farmacia_carol.css">
+</head>
+<body>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L12 8M8 4H16M3 12h18M5 12v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"/>
+            <line x1="9" y1="16" x2="15" y2="16"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <h1>Farmacia Carol</h1>
+          <span>Facturación & CxC</span>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Principal</div>
+      <a href="#" class="nav-item active" data-section="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Dashboard</span>
+      </a>
+
+      <div class="nav-section-title">Facturación</div>
+      <a href="#" class="nav-item" data-section="facturas">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span>Facturas</span>
+      </a>
+      <a href="#" class="nav-item" data-section="nueva-factura">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        <span>Nueva Factura</span>
+      </a>
+
+      <div class="nav-section-title">Cuentas x Cobrar</div>
+      <a href="#" class="nav-item" data-section="cxc">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span>Cuentas x Cobrar</span>
+        <span class="nav-badge" id="cxcBadge">3</span>
+      </a>
+      <a href="#" class="nav-item" data-section="clientes">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Clientes</span>
+      </a>
+
+      <div class="nav-section-title">Base de Datos</div>
+      <a href="#" class="nav-item" data-section="triggers">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span>Triggers & Logs</span>
+      </a>
+      <a href="#" class="nav-item" data-section="arquitectura">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Arquitectura BD</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">LC</div>
+        <div>
+          <div class="user-name">Laura Carolina</div>
+          <div class="user-role">Gerente de Farmacia</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content" id="mainContent">
+
+    <!-- ===== TOP BAR ===== -->
+    <header class="top-bar">
+      <button class="menu-toggle" id="menuToggle" aria-label="Alternar menú">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="breadcrumb" id="breadcrumb">
+        <span>Farmacia Carol</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>
+        <span class="breadcrumb-current">Dashboard</span>
+      </div>
+      <div class="top-bar-right">
+        <a href="farmacia_carol_db.sql" download="farmacia_carol_db.sql" class="btn btn-sm btn-outline" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px; font-size:0.8rem; padding:6px 12px; border:1px solid rgba(16,185,129,0.3); border-radius:8px; color:var(--primary-light);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Descargar .SQL (Oracle)</span>
+        </a>
+        <a href="index.html" class="btn btn-sm" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px; font-size:0.8rem; padding:6px 12px; background:rgba(249,115,22,0.15); border:1px solid rgba(249,115,22,0.3); border-radius:8px; color:#fb923c; transition:all 0.2s;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect width="40" height="40" rx="10" fill="none"/><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Ferretería Americana (TSS)</span>
+        </a>
+        <div class="trigger-indicator">
+          <span class="trigger-icon">⚡</span>
+          <span>Triggers Activos</span>
+        </div>
+        <div class="db-status">
+          <span class="status-dot"></span>
+          <span>Oracle DB Conectada</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== SECTION: DASHBOARD ===== -->
+    <section class="content-section active" id="section-dashboard">
+      <div class="section-header">
+        <h2>Dashboard — Facturación & Cuentas x Cobrar</h2>
+        <p>Resumen financiero integrado con triggers automáticos de base de datos</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card stat-primary">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value" id="statTotalFacturado">—</span>
+            <span class="stat-label">Total Facturado</span>
+          </div>
+        </div>
+        <div class="stat-card stat-warning">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value" id="statTotalPendiente">—</span>
+            <span class="stat-label">Pendiente de Cobro</span>
+          </div>
+        </div>
+        <div class="stat-card stat-error">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value" id="statTotalVencido">—</span>
+            <span class="stat-label">Cuentas Vencidas</span>
+          </div>
+        </div>
+        <div class="stat-card stat-success">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value" id="statTotalCobrado">—</span>
+            <span class="stat-label">Total Cobrado</span>
+          </div>
+        </div>
+        <div class="stat-card stat-info">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value" id="statFacturasPend">—</span>
+            <span class="stat-label">Facturas Pendientes</span>
+          </div>
+        </div>
+        <div class="stat-card stat-accent">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value" id="statCxcVencidas">—</span>
+            <span class="stat-label">CxC Vencidas</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aging Report -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Análisis de Antigüedad de Cartera (Aging Report)</h3>
+          <span class="badge badge-accent">Vista Materializada</span>
+        </div>
+        <div class="card-body">
+          <div class="aging-bar">
+            <div class="aging-segment current" id="agingCurrent" style="width:40%"></div>
+            <div class="aging-segment d30" id="agingD30" style="width:30%"></div>
+            <div class="aging-segment d60" id="agingD60" style="width:20%"></div>
+            <div class="aging-segment d90" id="agingD90" style="width:10%"></div>
+          </div>
+          <div class="aging-legend">
+            <div class="aging-legend-item">
+              <div class="aging-dot current"></div>
+              <span>Al día: <strong id="agingCurrentAmt">—</strong></span>
+            </div>
+            <div class="aging-legend-item">
+              <div class="aging-dot d30"></div>
+              <span>1-30 días: <strong id="agingD30Amt">—</strong></span>
+            </div>
+            <div class="aging-legend-item">
+              <div class="aging-dot d60"></div>
+              <span>31-60 días: <strong id="agingD60Amt">—</strong></span>
+            </div>
+            <div class="aging-legend-item">
+              <div class="aging-dot d90"></div>
+              <span>60+ días: <strong id="agingD90Amt">—</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen de Integración -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Flujo de Integración — Triggers en Tiempo Real</h3>
+          <span class="badge badge-primary">Automático</span>
+        </div>
+        <div class="card-body">
+          <div class="integration-flow">
+            <div class="flow-panel">
+              <h4>
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" width="20" height="20"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Facturación
+                <span class="panel-badge" style="background:var(--primary-100); color:var(--primary);">INSERT</span>
+              </h4>
+              <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.6;">
+                Al crear una nueva factura a <strong>crédito</strong>, el sistema asigna NCF automáticamente
+                via <code>SEQ_FACTURA</code> y un <strong>BEFORE INSERT TRIGGER</strong> invoca
+                <code>sp_generar_ncf()</code>.
+              </p>
+            </div>
+            <div class="flow-arrow">⚡→</div>
+            <div class="flow-panel">
+              <h4>
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" width="20" height="20"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Trigger AFTER INSERT
+                <span class="panel-badge" style="background:var(--accent-100); color:var(--accent);">TRIGGER</span>
+              </h4>
+              <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.6;">
+                <code>TRG_AFTER_INSERT_FACTURA</code> se dispara automáticamente
+                y ejecuta: INSERT en <strong>CUENTAS_POR_COBRAR</strong>, calcula fecha de vencimiento
+                según días de crédito del cliente, y actualiza el <strong>balance</strong> del cliente.
+              </p>
+            </div>
+            <div class="flow-arrow">→📊</div>
+            <div class="flow-panel">
+              <h4>
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="2" width="20" height="20"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                Cuentas x Cobrar
+                <span class="panel-badge" style="background:var(--info-bg); color:var(--info);">AUTO</span>
+              </h4>
+              <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.6;">
+                Se crea el registro CxC automáticamente con <code>SEQ_CXC.NEXTVAL</code>.
+                Al registrar pagos, <code>TRG_AFTER_INSERT_PAGO</code> actualiza saldos,
+                estado de la CxC y la factura original. Un <strong>JOB</strong> recalcula
+                días de mora periódicamente.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION: FACTURAS ===== -->
+    <section class="content-section" id="section-facturas">
+      <div class="section-header">
+        <h2>Registro de Facturas</h2>
+        <p>Facturas emitidas con NCF generado automáticamente por triggers</p>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Facturas — Farmacia Carol</h3>
+          <div class="card-actions">
+            <span class="badge badge-accent">⚡ NCF via SEQ_FACTURA + Trigger</span>
+          </div>
+        </div>
+        <div class="card-body table-responsive">
+          <table class="data-table" id="tablaFacturas">
+            <thead>
+              <tr>
+                <th>NCF</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Subtotal</th>
+                <th>ITBIS 18%</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyFacturas"></tbody>
+            <tfoot id="tfootFacturas"></tfoot>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION: NUEVA FACTURA ===== -->
+    <section class="content-section" id="section-nueva-factura">
+      <div class="section-header">
+        <h2>Nueva Factura</h2>
+        <p>Al guardar, se disparan automáticamente los triggers de BD para crear la cuenta por cobrar</p>
+      </div>
+
+      <div class="two-col">
+        <!-- Datos de la factura -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Datos de la Factura</h3>
+            <span class="badge badge-primary">BEFORE INSERT → sp_generar_ncf()</span>
+          </div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="newFacturaCliente">Cliente</label>
+                <select id="newFacturaCliente"></select>
+              </div>
+              <div class="form-group">
+                <label>RNC Emisor</label>
+                <input type="text" value="130987654" readonly>
+              </div>
+              <div class="form-group">
+                <label>Serie NCF</label>
+                <input type="text" value="B01 (Crédito Fiscal)" readonly>
+              </div>
+              <div class="form-group">
+                <label>Moneda</label>
+                <input type="text" value="DOP (Peso Dominicano)" readonly>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="newFacturaNotas">Notas / Observaciones</label>
+              <textarea id="newFacturaNotas" placeholder="Notas opcionales para la factura..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Agregar líneas -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Agregar Productos</h3>
+          </div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label for="lineProducto">Producto</label>
+                <select id="lineProducto"></select>
+              </div>
+              <div class="form-group">
+                <label for="lineCantidad">Cantidad</label>
+                <input type="number" id="lineCantidad" value="1" min="1">
+              </div>
+              <div class="form-group" style="display:flex; align-items:flex-end;">
+                <button class="btn btn-primary" onclick="agregarLinea()" style="width:100%;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Agregar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Líneas de la factura -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Detalle de Productos</h3>
+          <span class="badge badge-warning">ITBIS 18%</span>
+        </div>
+        <div class="card-body table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Producto</th>
+                <th>Cant.</th>
+                <th>Precio</th>
+                <th>ITBIS</th>
+                <th>Total</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tbodyNewLines"></tbody>
+          </table>
+          <div id="newInvoiceTotals"></div>
+          <div class="action-bar">
+            <button class="btn btn-primary btn-lg" id="btnProcesarFactura" onclick="procesarFactura()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+              Procesar Factura
+            </button>
+            <span style="font-size:0.8rem; color:var(--accent); display:flex; align-items:center; gap:6px;">
+              ⚡ Al procesar se disparan: TRG_BEFORE_INSERT_FACTURA → TRG_AFTER_INSERT_FACTURA → CxC automática
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION: CUENTAS POR COBRAR ===== -->
+    <section class="content-section" id="section-cxc">
+      <div class="section-header">
+        <h2>Cuentas por Cobrar</h2>
+        <p>Registros creados automáticamente por <code>TRG_AFTER_INSERT_FACTURA</code> — Pagos actualizados por <code>TRG_AFTER_INSERT_PAGO</code></p>
+      </div>
+
+      <div class="action-bar" style="margin-bottom:20px;">
+        <button class="btn btn-accent" onclick="ejecutarJobVencimientos()">
+          🔄 Ejecutar Job de Vencimientos
+        </button>
+        <button class="btn btn-outline" onclick="emitirNotaCredito()">
+          📝 Emitir Nota de Crédito (demo)
+        </button>
+        <span style="font-size:0.78rem; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+          ⚡ El Job ejecuta <code>sp_actualizar_mora(SYSDATE)</code> para recalcular días de mora
+        </span>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Cartera de Cuentas por Cobrar</h3>
+          <span class="badge badge-accent">⚡ Generada por Triggers</span>
+        </div>
+        <div class="card-body table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID CxC</th>
+                <th>Factura</th>
+                <th>Cliente</th>
+                <th>Monto Original</th>
+                <th>Pagado</th>
+                <th>Saldo</th>
+                <th>Vencimiento</th>
+                <th>Mora</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyCxC"></tbody>
+            <tfoot id="tfootCxC"></tfoot>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION: CLIENTES ===== -->
+    <section class="content-section" id="section-clientes">
+      <div class="section-header">
+        <h2>Clientes con Línea de Crédito</h2>
+        <p>Balance actualizado automáticamente por triggers al facturar y al registrar pagos</p>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Estado de Crédito por Cliente</h3>
+          <span class="badge badge-primary">Vista: VW_ESTADO_CREDITO_CLIENTES</span>
+        </div>
+        <div class="card-body table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>RNC</th>
+                <th>Plazo</th>
+                <th>Límite de Crédito</th>
+                <th>Balance Actual</th>
+                <th>Uso del Crédito</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyClientes"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION: TRIGGERS & LOGS ===== -->
+    <section class="content-section" id="section-triggers">
+      <div class="section-header">
+        <h2>Triggers, Procedures & Logs de Ejecución</h2>
+        <p>Registro en tiempo real de los disparadores y procedimientos almacenados ejecutados</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-group" data-tab-group="triggers">
+        <button class="tab-btn active" data-tab="tab-log" onclick="switchTab('triggers','tab-log')">📋 Log de Ejecución</button>
+        <button class="tab-btn" data-tab="tab-triggers-sql" onclick="switchTab('triggers','tab-triggers-sql')">⚡ Código de Triggers</button>
+        <button class="tab-btn" data-tab="tab-procedures" onclick="switchTab('triggers','tab-procedures')">🔧 Stored Procedures</button>
+        <button class="tab-btn" data-tab="tab-views" onclick="switchTab('triggers','tab-views')">👁 Vistas & Secuencias</button>
+      </div>
+
+      <!-- Tab: Log -->
+      <div class="tab-content active" id="tab-log" data-tab-content="triggers">
+        <div class="card">
+          <div class="card-header">
+            <h3>Log de Triggers en Tiempo Real</h3>
+            <span class="badge badge-accent">Live</span>
+          </div>
+          <div class="card-body">
+            <div class="trigger-log" id="triggerLogContainer">
+              <!-- Se llena por JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Triggers SQL -->
+      <div class="tab-content" id="tab-triggers-sql" data-tab-content="triggers">
+        <div class="card">
+          <div class="card-header">
+            <h3>TRG_BEFORE_INSERT_FACTURA</h3>
+            <span class="badge badge-accent">BEFORE INSERT</span>
+          </div>
+          <div class="card-body">
+            <div class="sql-block">
+              <span class="sql-label">PL/SQL — Oracle</span>
+<span class="kw">CREATE OR REPLACE TRIGGER</span> <span class="tbl">TRG_BEFORE_INSERT_FACTURA</span>
+<span class="kw">BEFORE INSERT ON</span> <span class="tbl">FACTURAS</span>
+<span class="kw">FOR EACH ROW</span>
+<span class="kw">DECLARE</span>
+    <span class="col">v_seq</span> <span class="kw">NUMBER</span>;
+    <span class="col">v_ncf</span> <span class="kw">VARCHAR2</span>(<span class="num">20</span>);
+<span class="kw">BEGIN</span>
+    <span class="cm">-- Obtener siguiente valor de la secuencia</span>
+    <span class="kw">SELECT</span> <span class="tbl">SEQ_FACTURA</span>.<span class="fn">NEXTVAL</span> <span class="kw">INTO</span> <span class="col">v_seq</span> <span class="kw">FROM</span> <span class="tbl">DUAL</span>;
+
+    <span class="cm">-- Generar NCF automáticamente vía Stored Procedure</span>
+    <span class="fn">sp_generar_ncf</span>(<span class="str">'B01'</span>, <span class="col">v_seq</span>, <span class="col">v_ncf</span>);
+
+    <span class="cm">-- Asignar valores calculados al nuevo registro</span>
+    :NEW.<span class="col">id</span>         := <span class="col">v_seq</span>;
+    :NEW.<span class="col">ncf</span>        := <span class="col">v_ncf</span>;
+    :NEW.<span class="col">fecha</span>      := <span class="fn">SYSDATE</span>;
+    :NEW.<span class="col">itbis</span>      := :NEW.<span class="col">subtotal</span> * <span class="num">0.18</span>;
+    :NEW.<span class="col">total</span>      := :NEW.<span class="col">subtotal</span> + :NEW.<span class="col">itbis</span>;
+
+    <span class="cm">-- Log de auditoría</span>
+    <span class="kw">INSERT INTO</span> <span class="tbl">AUDIT_LOG</span> (<span class="col">tabla</span>, <span class="col">operacion</span>, <span class="col">registro_id</span>, <span class="col">fecha</span>)
+    <span class="kw">VALUES</span> (<span class="str">'FACTURAS'</span>, <span class="str">'INSERT'</span>, <span class="col">v_seq</span>, <span class="fn">SYSDATE</span>);
+<span class="kw">END</span>;
+/
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>TRG_AFTER_INSERT_FACTURA</h3>
+            <span class="badge badge-accent">AFTER INSERT — Integración CxC</span>
+          </div>
+          <div class="card-body">
+            <div class="sql-block">
+              <span class="sql-label">PL/SQL — Oracle</span>
+<span class="kw">CREATE OR REPLACE TRIGGER</span> <span class="tbl">TRG_AFTER_INSERT_FACTURA</span>
+<span class="kw">AFTER INSERT ON</span> <span class="tbl">FACTURAS</span>
+<span class="kw">FOR EACH ROW</span>
+<span class="kw">WHEN</span> (NEW.<span class="col">tipo_pago</span> = <span class="str">'CREDITO'</span>)
+<span class="kw">DECLARE</span>
+    <span class="col">v_cxc_id</span>        <span class="kw">NUMBER</span>;
+    <span class="col">v_dias_credito</span>  <span class="kw">NUMBER</span>;
+    <span class="col">v_fecha_venc</span>    <span class="kw">DATE</span>;
+    <span class="col">v_balance</span>       <span class="kw">NUMBER</span>(<span class="num">12</span>,<span class="num">2</span>);
+    <span class="col">v_limite</span>        <span class="kw">NUMBER</span>(<span class="num">12</span>,<span class="num">2</span>);
+<span class="kw">BEGIN</span>
+    <span class="cm">-- 1. Obtener condiciones de crédito del cliente</span>
+    <span class="kw">SELECT</span> <span class="col">dias_credito</span>, <span class="col">balance</span>, <span class="col">limite_credito</span>
+    <span class="kw">INTO</span>   <span class="col">v_dias_credito</span>, <span class="col">v_balance</span>, <span class="col">v_limite</span>
+    <span class="kw">FROM</span>   <span class="tbl">CLIENTES</span>
+    <span class="kw">WHERE</span>  <span class="col">id</span> = :NEW.<span class="col">cliente_id</span>;
+
+    <span class="cm">-- 2. Calcular fecha de vencimiento</span>
+    <span class="col">v_fecha_venc</span> := :NEW.<span class="col">fecha</span> + <span class="col">v_dias_credito</span>;
+
+    <span class="cm">-- 3. Crear registro en CUENTAS_POR_COBRAR (secuencia)</span>
+    <span class="kw">SELECT</span> <span class="tbl">SEQ_CXC</span>.<span class="fn">NEXTVAL</span> <span class="kw">INTO</span> <span class="col">v_cxc_id</span> <span class="kw">FROM</span> <span class="tbl">DUAL</span>;
+
+    <span class="kw">INSERT INTO</span> <span class="tbl">CUENTAS_POR_COBRAR</span> (
+        <span class="col">id</span>, <span class="col">factura_id</span>, <span class="col">cliente_id</span>,
+        <span class="col">monto_original</span>, <span class="col">monto_pagado</span>, <span class="col">saldo</span>,
+        <span class="col">fecha_emision</span>, <span class="col">fecha_vencimiento</span>, <span class="col">estado</span>
+    ) <span class="kw">VALUES</span> (
+        <span class="col">v_cxc_id</span>, :NEW.<span class="col">id</span>, :NEW.<span class="col">cliente_id</span>,
+        :NEW.<span class="col">total</span>, <span class="num">0</span>, :NEW.<span class="col">total</span>,
+        :NEW.<span class="col">fecha</span>, <span class="col">v_fecha_venc</span>, <span class="str">'PENDIENTE'</span>
+    );
+
+    <span class="cm">-- 4. Actualizar balance del cliente</span>
+    <span class="kw">UPDATE</span> <span class="tbl">CLIENTES</span>
+    <span class="kw">SET</span>    <span class="col">balance</span> = <span class="col">balance</span> + :NEW.<span class="col">total</span>
+    <span class="kw">WHERE</span>  <span class="col">id</span> = :NEW.<span class="col">cliente_id</span>;
+
+    <span class="cm">-- 5. Verificar límite de crédito</span>
+    <span class="kw">IF</span> (<span class="col">v_balance</span> + :NEW.<span class="col">total</span>) > <span class="col">v_limite</span> <span class="kw">THEN</span>
+        <span class="fn">sp_alerta_credito</span>(:NEW.<span class="col">cliente_id</span>,
+            <span class="col">v_balance</span> + :NEW.<span class="col">total</span>, <span class="col">v_limite</span>);
+    <span class="kw">END IF</span>;
+
+    <span class="cm">-- 6. Log de auditoría</span>
+    <span class="kw">INSERT INTO</span> <span class="tbl">AUDIT_LOG</span> (<span class="col">tabla</span>, <span class="col">operacion</span>, <span class="col">registro_id</span>, <span class="col">detalle</span>, <span class="col">fecha</span>)
+    <span class="kw">VALUES</span> (<span class="str">'CUENTAS_POR_COBRAR'</span>, <span class="str">'INSERT_VIA_TRIGGER'</span>, <span class="col">v_cxc_id</span>,
+        <span class="str">'Factura '</span> || :NEW.<span class="col">ncf</span> || <span class="str">' → CxC creada'</span>, <span class="fn">SYSDATE</span>);
+<span class="kw">END</span>;
+/
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>TRG_AFTER_INSERT_PAGO</h3>
+            <span class="badge badge-accent">AFTER INSERT — Actualiza CxC</span>
+          </div>
+          <div class="card-body">
+            <div class="sql-block">
+              <span class="sql-label">PL/SQL — Oracle</span>
+<span class="kw">CREATE OR REPLACE TRIGGER</span> <span class="tbl">TRG_AFTER_INSERT_PAGO</span>
+<span class="kw">AFTER INSERT ON</span> <span class="tbl">PAGOS_CXC</span>
+<span class="kw">FOR EACH ROW</span>
+<span class="kw">DECLARE</span>
+    <span class="col">v_saldo</span>     <span class="kw">NUMBER</span>(<span class="num">12</span>,<span class="num">2</span>);
+    <span class="col">v_estado</span>    <span class="kw">VARCHAR2</span>(<span class="num">20</span>);
+    <span class="col">v_fact_id</span>   <span class="kw">NUMBER</span>;
+    <span class="col">v_cli_id</span>    <span class="kw">NUMBER</span>;
+<span class="kw">BEGIN</span>
+    <span class="cm">-- 1. Actualizar monto pagado y saldo en CxC</span>
+    <span class="kw">UPDATE</span> <span class="tbl">CUENTAS_POR_COBRAR</span>
+    <span class="kw">SET</span>    <span class="col">monto_pagado</span> = <span class="col">monto_pagado</span> + :NEW.<span class="col">monto</span>,
+           <span class="col">saldo</span>        = <span class="col">monto_original</span> - (<span class="col">monto_pagado</span> + :NEW.<span class="col">monto</span>)
+    <span class="kw">WHERE</span>  <span class="col">id</span> = :NEW.<span class="col">cxc_id</span>
+    <span class="kw">RETURNING</span> <span class="col">saldo</span>, <span class="col">factura_id</span>, <span class="col">cliente_id</span>
+    <span class="kw">INTO</span> <span class="col">v_saldo</span>, <span class="col">v_fact_id</span>, <span class="col">v_cli_id</span>;
+
+    <span class="cm">-- 2. Determinar nuevo estado</span>
+    <span class="kw">IF</span> <span class="col">v_saldo</span> <= <span class="num">0</span> <span class="kw">THEN</span>
+        <span class="col">v_estado</span> := <span class="str">'PAGADA'</span>;
+    <span class="kw">ELSE</span>
+        <span class="col">v_estado</span> := <span class="str">'PARCIAL'</span>;
+    <span class="kw">END IF</span>;
+
+    <span class="cm">-- 3. Actualizar estado de CxC y Factura</span>
+    <span class="kw">UPDATE</span> <span class="tbl">CUENTAS_POR_COBRAR</span> <span class="kw">SET</span> <span class="col">estado</span> = <span class="col">v_estado</span> <span class="kw">WHERE</span> <span class="col">id</span> = :NEW.<span class="col">cxc_id</span>;
+    <span class="kw">UPDATE</span> <span class="tbl">FACTURAS</span> <span class="kw">SET</span> <span class="col">estado</span> = <span class="col">v_estado</span> <span class="kw">WHERE</span> <span class="col">id</span> = <span class="col">v_fact_id</span>;
+
+    <span class="cm">-- 4. Actualizar balance del cliente</span>
+    <span class="kw">UPDATE</span> <span class="tbl">CLIENTES</span>
+    <span class="kw">SET</span>    <span class="col">balance</span> = <span class="fn">GREATEST</span>(<span class="num">0</span>, <span class="col">balance</span> - :NEW.<span class="col">monto</span>)
+    <span class="kw">WHERE</span>  <span class="col">id</span> = <span class="col">v_cli_id</span>;
+<span class="kw">END</span>;
+/
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Stored Procedures -->
+      <div class="tab-content" id="tab-procedures" data-tab-content="triggers">
+        <div class="card">
+          <div class="card-header">
+            <h3>SP_GENERAR_NCF — Generador de Comprobantes Fiscales</h3>
+            <span class="badge badge-primary">PROCEDURE</span>
+          </div>
+          <div class="card-body">
+            <div class="sql-block">
+              <span class="sql-label">PL/SQL — Oracle</span>
+<span class="kw">CREATE OR REPLACE PROCEDURE</span> <span class="fn">sp_generar_ncf</span> (
+    <span class="col">p_serie</span>     <span class="kw">IN</span>  <span class="kw">VARCHAR2</span>,
+    <span class="col">p_secuencia</span> <span class="kw">IN</span>  <span class="kw">NUMBER</span>,
+    <span class="col">p_ncf</span>       <span class="kw">OUT</span> <span class="kw">VARCHAR2</span>
+) <span class="kw">AS</span>
+<span class="kw">BEGIN</span>
+    <span class="col">p_ncf</span> := <span class="col">p_serie</span> || <span class="fn">LPAD</span>(<span class="col">p_secuencia</span>, <span class="num">8</span>, <span class="str">'0'</span>);
+
+    <span class="cm">-- Registrar en tabla de control NCF</span>
+    <span class="kw">INSERT INTO</span> <span class="tbl">CONTROL_NCF</span> (<span class="col">serie</span>, <span class="col">secuencia</span>, <span class="col">ncf</span>, <span class="col">fecha_uso</span>)
+    <span class="kw">VALUES</span> (<span class="col">p_serie</span>, <span class="col">p_secuencia</span>, <span class="col">p_ncf</span>, <span class="fn">SYSDATE</span>);
+
+    <span class="kw">COMMIT</span>;
+<span class="kw">END</span>;
+/
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>SP_ACTUALIZAR_MORA — Recalcula Días de Mora</h3>
+            <span class="badge badge-warning">PROCEDURE + CURSOR</span>
+          </div>
+          <div class="card-body">
+            <div class="sql-block">
+              <span class="sql-label">PL/SQL — Oracle</span>
+<span class="kw">CREATE OR REPLACE PROCEDURE</span> <span class="fn">sp_actualizar_mora</span> (
+    <span class="col">p_fecha_actual</span> <span class="kw">IN</span> <span class="kw">DATE</span> <span class="kw">DEFAULT</span> <span class="fn">SYSDATE</span>
+) <span class="kw">AS</span>
+    <span class="cm">-- Cursor para recorrer cuentas no pagadas</span>
+    <span class="kw">CURSOR</span> <span class="col">c_cuentas</span> <span class="kw">IS</span>
+        <span class="kw">SELECT</span> <span class="col">id</span>, <span class="col">fecha_vencimiento</span>, <span class="col">estado</span>
+        <span class="kw">FROM</span>   <span class="tbl">CUENTAS_POR_COBRAR</span>
+        <span class="kw">WHERE</span>  <span class="col">estado</span> <span class="kw">NOT IN</span> (<span class="str">'PAGADA'</span>, <span class="str">'ANULADA'</span>)
+        <span class="kw">FOR UPDATE</span>;
+
+    <span class="col">v_dias_mora</span>  <span class="kw">NUMBER</span>;
+    <span class="col">v_total</span>      <span class="kw">NUMBER</span> := <span class="num">0</span>;
+<span class="kw">BEGIN</span>
+    <span class="kw">FOR</span> <span class="col">rec</span> <span class="kw">IN</span> <span class="col">c_cuentas</span> <span class="kw">LOOP</span>
+        <span class="col">v_dias_mora</span> := <span class="fn">GREATEST</span>(<span class="num">0</span>,
+            <span class="fn">TRUNC</span>(<span class="col">p_fecha_actual</span>) - <span class="fn">TRUNC</span>(<span class="col">rec</span>.<span class="col">fecha_vencimiento</span>));
+
+        <span class="kw">UPDATE</span> <span class="tbl">CUENTAS_POR_COBRAR</span>
+        <span class="kw">SET</span>    <span class="col">dias_mora</span> = <span class="col">v_dias_mora</span>,
+               <span class="col">estado</span>    = <span class="kw">CASE</span>
+                   <span class="kw">WHEN</span> <span class="col">v_dias_mora</span> > <span class="num">0</span> <span class="kw">THEN</span> <span class="str">'VENCIDA'</span>
+                   <span class="kw">ELSE</span> <span class="col">rec</span>.<span class="col">estado</span>
+               <span class="kw">END</span>
+        <span class="kw">WHERE CURRENT OF</span> <span class="col">c_cuentas</span>;
+
+        <span class="col">v_total</span> := <span class="col">v_total</span> + <span class="num">1</span>;
+    <span class="kw">END LOOP</span>;
+
+    <span class="cm">-- Registrar ejecución del job</span>
+    <span class="kw">INSERT INTO</span> <span class="tbl">JOB_LOG</span> (<span class="col">nombre</span>, <span class="col">registros_afectados</span>, <span class="col">fecha</span>)
+    <span class="kw">VALUES</span> (<span class="str">'sp_actualizar_mora'</span>, <span class="col">v_total</span>, <span class="fn">SYSDATE</span>);
+
+    <span class="kw">COMMIT</span>;
+<span class="kw">END</span>;
+/
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>PKG_FARMACIA_CAROL — Package de Utilidades</h3>
+            <span class="badge badge-success">PACKAGE</span>
+          </div>
+          <div class="card-body">
+            <div class="sql-block">
+              <span class="sql-label">PL/SQL — Oracle Package</span>
+<span class="kw">CREATE OR REPLACE PACKAGE</span> <span class="tbl">PKG_FARMACIA_CAROL</span> <span class="kw">AS</span>
+    <span class="cm">-- Tipos</span>
+    <span class="kw">TYPE</span> <span class="col">t_aging_record</span> <span class="kw">IS RECORD</span> (
+        <span class="col">rango</span>       <span class="kw">VARCHAR2</span>(<span class="num">20</span>),
+        <span class="col">monto</span>       <span class="kw">NUMBER</span>(<span class="num">12</span>,<span class="num">2</span>),
+        <span class="col">cantidad</span>    <span class="kw">NUMBER</span>
+    );
+    <span class="kw">TYPE</span> <span class="col">t_aging_table</span> <span class="kw">IS TABLE OF</span> <span class="col">t_aging_record</span>;
+
+    <span class="cm">-- Funciones públicas</span>
+    <span class="kw">FUNCTION</span> <span class="fn">obtener_saldo_cliente</span>(<span class="col">p_cliente_id</span> <span class="kw">NUMBER</span>) <span class="kw">RETURN NUMBER</span>;
+    <span class="kw">FUNCTION</span> <span class="fn">calcular_itbis</span>(<span class="col">p_monto</span> <span class="kw">NUMBER</span>, <span class="col">p_aplica</span> <span class="kw">BOOLEAN</span>) <span class="kw">RETURN NUMBER</span>;
+    <span class="kw">FUNCTION</span> <span class="fn">puede_facturar_credito</span>(<span class="col">p_cliente_id</span> <span class="kw">NUMBER</span>, <span class="col">p_monto</span> <span class="kw">NUMBER</span>) <span class="kw">RETURN BOOLEAN</span>;
+
+    <span class="cm">-- Procedimientos públicos</span>
+    <span class="kw">PROCEDURE</span> <span class="fn">generar_reporte_aging</span>(<span class="col">p_resultado</span> <span class="kw">OUT</span> <span class="col">t_aging_table</span>);
+    <span class="kw">PROCEDURE</span> <span class="fn">cerrar_periodo</span>(<span class="col">p_periodo</span> <span class="kw">VARCHAR2</span>);
+<span class="kw">END</span> <span class="tbl">PKG_FARMACIA_CAROL</span>;
+/
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Views & Sequences -->
+      <div class="tab-content" id="tab-views" data-tab-content="triggers">
+        <div class="card">
+          <div class="card-header">
+            <h3>Secuencias (Sequences)</h3>
+            <span class="badge badge-info">SEQUENCE</span>
+          </div>
+          <div class="card-body">
+            <div class="sql-block">
+              <span class="sql-label">Oracle DDL</span>
+<span class="cm">-- Secuencia para Facturas (genera ID y base para NCF)</span>
+<span class="kw">CREATE SEQUENCE</span> <span class="tbl">SEQ_FACTURA</span>
+    <span class="kw">START WITH</span> <span class="num">1000</span>
+    <span class="kw">INCREMENT BY</span> <span class="num">1</span>
+    <span class="kw">NOCACHE</span>
+    <span class="kw">NOCYCLE</span>;
+
+<span class="cm">-- Secuencia para Cuentas por Cobrar</span>
+<span class="kw">CREATE SEQUENCE</span> <span class="tbl">SEQ_CXC</span>
+    <span class="kw">START WITH</span> <span class="num">3000</span>
+    <span class="kw">INCREMENT BY</span> <span class="num">1</span>
+    <span class="kw">NOCACHE</span>
+    <span class="kw">NOCYCLE</span>;
+
+<span class="cm">-- Secuencia para Pagos</span>
+<span class="kw">CREATE SEQUENCE</span> <span class="tbl">SEQ_PAGO</span>
+    <span class="kw">START WITH</span> <span class="num">5000</span>
+    <span class="kw">INCREMENT BY</span> <span class="num">1</span>
+    <span class="kw">NOCACHE</span>
+    <span class="kw">NOCYCLE</span>;
+
+<span class="cm">-- Secuencia para Notas de Crédito</span>
+<span class="kw">CREATE SEQUENCE</span> <span class="tbl">SEQ_NOTA_CREDITO</span>
+    <span class="kw">START WITH</span> <span class="num">200</span>
+    <span class="kw">INCREMENT BY</span> <span class="num">1</span>
+    <span class="kw">NOCACHE</span>
+    <span class="kw">NOCYCLE</span>;
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>VW_ESTADO_CREDITO_CLIENTES — Vista de Crédito</h3>
+            <span class="badge badge-warning">VIEW</span>
+          </div>
+          <div class="card-body">
+            <div class="sql-block">
+              <span class="sql-label">Oracle DDL</span>
+<span class="kw">CREATE OR REPLACE VIEW</span> <span class="tbl">VW_ESTADO_CREDITO_CLIENTES</span> <span class="kw">AS</span>
+<span class="kw">SELECT</span>
+    c.<span class="col">id</span>,
+    c.<span class="col">nombre</span>,
+    c.<span class="col">rnc</span>,
+    c.<span class="col">limite_credito</span>,
+    c.<span class="col">balance</span>,
+    <span class="fn">ROUND</span>((c.<span class="col">balance</span> / <span class="fn">NULLIF</span>(c.<span class="col">limite_credito</span>, <span class="num">0</span>)) * <span class="num">100</span>, <span class="num">1</span>) <span class="kw">AS</span> <span class="col">pct_uso</span>,
+    c.<span class="col">dias_credito</span>,
+    (<span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) <span class="kw">FROM</span> <span class="tbl">CUENTAS_POR_COBRAR</span> cx
+     <span class="kw">WHERE</span> cx.<span class="col">cliente_id</span> = c.<span class="col">id</span>
+       <span class="kw">AND</span> cx.<span class="col">estado</span> = <span class="str">'VENCIDA'</span>) <span class="kw">AS</span> <span class="col">cuentas_vencidas</span>,
+    (<span class="kw">SELECT</span> <span class="fn">NVL</span>(<span class="fn">SUM</span>(cx.<span class="col">saldo</span>), <span class="num">0</span>) <span class="kw">FROM</span> <span class="tbl">CUENTAS_POR_COBRAR</span> cx
+     <span class="kw">WHERE</span> cx.<span class="col">cliente_id</span> = c.<span class="col">id</span>
+       <span class="kw">AND</span> cx.<span class="col">estado</span> <span class="kw">IN</span> (<span class="str">'PENDIENTE'</span>, <span class="str">'PARCIAL'</span>, <span class="str">'VENCIDA'</span>)) <span class="kw">AS</span> <span class="col">total_por_cobrar</span>
+<span class="kw">FROM</span>   <span class="tbl">CLIENTES</span> c
+<span class="kw">WHERE</span>  c.<span class="col">tipo</span> = <span class="str">'CREDITO'</span>
+<span class="kw">ORDER BY</span> <span class="col">pct_uso</span> <span class="kw">DESC</span>;
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>VW_AGING_REPORT — Vista Materializada de Antigüedad</h3>
+            <span class="badge badge-warning">MATERIALIZED VIEW</span>
+          </div>
+          <div class="card-body">
+            <div class="sql-block">
+              <span class="sql-label">Oracle DDL</span>
+<span class="kw">CREATE MATERIALIZED VIEW</span> <span class="tbl">VW_AGING_REPORT</span>
+<span class="kw">BUILD IMMEDIATE</span>
+<span class="kw">REFRESH COMPLETE ON DEMAND</span>
+<span class="kw">AS</span>
+<span class="kw">SELECT</span>
+    c.<span class="col">id</span> <span class="kw">AS</span> <span class="col">cliente_id</span>,
+    c.<span class="col">nombre</span> <span class="kw">AS</span> <span class="col">cliente</span>,
+    <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> cx.<span class="col">dias_mora</span> = <span class="num">0</span> <span class="kw">THEN</span> cx.<span class="col">saldo</span> <span class="kw">ELSE</span> <span class="num">0</span> <span class="kw">END</span>) <span class="kw">AS</span> <span class="col">al_dia</span>,
+    <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> cx.<span class="col">dias_mora</span> <span class="kw">BETWEEN</span> <span class="num">1</span> <span class="kw">AND</span> <span class="num">30</span> <span class="kw">THEN</span> cx.<span class="col">saldo</span> <span class="kw">ELSE</span> <span class="num">0</span> <span class="kw">END</span>) <span class="kw">AS</span> <span class="col">mora_1_30</span>,
+    <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> cx.<span class="col">dias_mora</span> <span class="kw">BETWEEN</span> <span class="num">31</span> <span class="kw">AND</span> <span class="num">60</span> <span class="kw">THEN</span> cx.<span class="col">saldo</span> <span class="kw">ELSE</span> <span class="num">0</span> <span class="kw">END</span>) <span class="kw">AS</span> <span class="col">mora_31_60</span>,
+    <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> cx.<span class="col">dias_mora</span> > <span class="num">60</span> <span class="kw">THEN</span> cx.<span class="col">saldo</span> <span class="kw">ELSE</span> <span class="num">0</span> <span class="kw">END</span>) <span class="kw">AS</span> <span class="col">mora_60_plus</span>,
+    <span class="fn">SUM</span>(cx.<span class="col">saldo</span>) <span class="kw">AS</span> <span class="col">total_saldo</span>
+<span class="kw">FROM</span>   <span class="tbl">CLIENTES</span> c
+<span class="kw">JOIN</span>   <span class="tbl">CUENTAS_POR_COBRAR</span> cx <span class="kw">ON</span> cx.<span class="col">cliente_id</span> = c.<span class="col">id</span>
+<span class="kw">WHERE</span>  cx.<span class="col">estado</span> <span class="kw">NOT IN</span> (<span class="str">'PAGADA'</span>, <span class="str">'ANULADA'</span>)
+<span class="kw">GROUP BY</span> c.<span class="col">id</span>, c.<span class="col">nombre</span>;
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION: ARQUITECTURA ===== -->
+    <section class="content-section" id="section-arquitectura">
+      <div class="section-header">
+        <h2>Arquitectura de Base de Datos</h2>
+        <p>Diagrama y justificación de los componentes propietarios utilizados en la integración</p>
+      </div>
+
+      <!-- Diagrama -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Diagrama de Arquitectura — Integración Facturación ↔ CxC</h3>
+        </div>
+        <div class="card-body">
+          <div class="arch-diagram">
+            <!-- Capa: Facturación -->
+            <div class="arch-layer layer-facturacion">
+              <div class="layer-title" style="color:var(--primary);">
+                📋 Módulo de Facturación
+                <span class="layer-badge" style="background:var(--primary-100); color:var(--primary);">App Layer</span>
+              </div>
+              <div class="arch-components">
+                <div class="arch-component">
+                  <div class="component-icon fc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                  <span>Gestión de Facturas</span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-component">
+                  <div class="component-icon fc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+                  <span>NCF / ITBIS</span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-component">
+                  <div class="component-icon fc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+                  <span>Clientes</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Conector: Triggers -->
+            <div class="arch-layer-connector">
+              <div class="connector-line"></div>
+              <div class="connector-label">⚡ TRIGGERS (BEFORE/AFTER INSERT)</div>
+              <div class="connector-line"></div>
+            </div>
+
+            <!-- Capa: Triggers -->
+            <div class="arch-layer layer-triggers">
+              <div class="layer-title" style="color:var(--accent);">
+                ⚡ Capa de Triggers & Procedures
+                <span class="layer-badge" style="background:var(--accent-100); color:var(--accent);">PL/SQL</span>
+              </div>
+              <div class="arch-components">
+                <div class="arch-component">
+                  <div class="component-icon tr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+                  <span>TRG_BEFORE_INSERT</span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-component">
+                  <div class="component-icon tr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+                  <span>TRG_AFTER_INSERT</span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-component">
+                  <div class="component-icon tr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+                  <span>Stored Procedures</span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-component">
+                  <div class="component-icon tr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+                  <span>Package</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Conector -->
+            <div class="arch-layer-connector">
+              <div class="connector-line"></div>
+              <div class="connector-label">INSERT / UPDATE automático</div>
+              <div class="connector-line"></div>
+            </div>
+
+            <!-- Capa: CxC -->
+            <div class="arch-layer layer-cxc">
+              <div class="layer-title" style="color:var(--info);">
+                💰 Módulo de Cuentas por Cobrar
+                <span class="layer-badge" style="background:var(--info-bg); color:var(--info);">Integrado</span>
+              </div>
+              <div class="arch-components">
+                <div class="arch-component">
+                  <div class="component-icon cx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                  <span>Cuentas x Cobrar</span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-component">
+                  <div class="component-icon cx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+                  <span>Registro de Pagos</span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-component">
+                  <div class="component-icon cx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                  <span>Notas de Crédito</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Conector -->
+            <div class="arch-layer-connector">
+              <div class="connector-line"></div>
+              <div class="connector-label">VIEWS + SEQUENCES + JOBS</div>
+              <div class="connector-line"></div>
+            </div>
+
+            <!-- Capa: BD -->
+            <div class="arch-layer layer-db">
+              <div class="layer-title" style="color:var(--warning);">
+                🗄 Capa de Base de Datos — Oracle
+                <span class="layer-badge" style="background:var(--warning-bg); color:var(--warning);">Oracle 19c</span>
+              </div>
+              <div class="arch-components">
+                <div class="arch-component">
+                  <div class="component-icon db"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+                  <span>Tablas (FACTURAS, CXC, PAGOS)</span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-component">
+                  <div class="component-icon db"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+                  <span>Vistas Materializadas</span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-component">
+                  <div class="component-icon db"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                  <span>DBMS_SCHEDULER Jobs</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Justificación Técnica -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Justificación Técnica — Tecnología Propietaria</h3>
+        </div>
+        <div class="card-body">
+          <div class="justification-list">
+            <div class="justification-item">
+              <div class="just-icon trigger-jicon">TRG</div>
+              <div class="just-content">
+                <h4>¿Por qué Triggers para la integración?</h4>
+                <p>Los <strong>triggers</strong> (disparadores) garantizan que cada factura a crédito genere automáticamente su cuenta por cobrar sin depender de la lógica de la aplicación. Esto asegura <strong>integridad referencial activa</strong>: no es posible crear una factura sin su correspondiente CxC. Usamos triggers <code>BEFORE INSERT</code> para asignar secuencias/NCF y <code>AFTER INSERT</code> para la integración entre tablas, siguiendo el patrón de <strong>propagación automática de eventos</strong> en Oracle.</p>
+              </div>
+            </div>
+            <div class="justification-item">
+              <div class="just-icon sp-icon">SP</div>
+              <div class="just-content">
+                <h4>¿Por qué Stored Procedures (PL/SQL)?</h4>
+                <p>Los procedimientos almacenados encapsulan la lógica de negocio crítica directamente en la BD: generación de NCF (<code>sp_generar_ncf</code>), recálculo de mora (<code>sp_actualizar_mora</code>), y alertas de crédito (<code>sp_alerta_credito</code>). Esto reduce el tráfico de red, garantiza la consistencia transaccional, y permite que los triggers invoquen lógica compleja sin exponer la implementación a la capa de presentación.</p>
+              </div>
+            </div>
+            <div class="justification-item">
+              <div class="just-icon seq-icon">SEQ</div>
+              <div class="just-content">
+                <h4>¿Por qué Secuencias (Sequences)?</h4>
+                <p>Las secuencias Oracle (<code>SEQ_FACTURA</code>, <code>SEQ_CXC</code>, <code>SEQ_PAGO</code>) garantizan la generación de IDs únicos y secuenciales sin bloqueos de tabla. Son fundamentales para el control fiscal (NCF) ya que la DGII exige numeración consecutiva e irrepetible de comprobantes. La opción <code>NOCACHE</code> evita saltos en la numeración, crítico para auditoría fiscal.</p>
+              </div>
+            </div>
+            <div class="justification-item">
+              <div class="just-icon view-icon">VIEW</div>
+              <div class="just-content">
+                <h4>¿Por qué Vistas y Vistas Materializadas?</h4>
+                <p>La vista <code>VW_ESTADO_CREDITO_CLIENTES</code> encapsula la consulta compleja de estado crediticio, mientras que <code>VW_AGING_REPORT</code> como vista materializada pre-calcula el análisis de antigüedad de cartera para consultas rápidas del dashboard. Se refresca bajo demanda con <code>DBMS_MVIEW.REFRESH</code>. Esto separa la complejidad de las consultas analíticas del código de la aplicación.</p>
+              </div>
+            </div>
+            <div class="justification-item">
+              <div class="just-icon cursor-icon">CUR</div>
+              <div class="just-content">
+                <h4>¿Por qué Cursores (Cursors)?</h4>
+                <p>El procedimiento <code>sp_actualizar_mora</code> utiliza un <strong>cursor explícito</strong> con <code>FOR UPDATE</code> para recorrer y actualizar las cuentas por cobrar pendientes. Esto permite procesamiento fila por fila con bloqueo optimista, evitando condiciones de carrera cuando múltiples sesiones acceden a la tabla de CxC simultáneamente.</p>
+              </div>
+            </div>
+            <div class="justification-item">
+              <div class="just-icon pkg-icon">PKG</div>
+              <div class="just-content">
+                <h4>¿Por qué un Package (Paquete)?</h4>
+                <p><code>PKG_FARMACIA_CAROL</code> agrupa funciones y procedimientos relacionados bajo un namespace único: cálculo de ITBIS, verificación de crédito, generación de reportes de aging. Los packages Oracle ofrecen <strong>estado de sesión persistente</strong>, carga en memoria compartida (SGA), y compilación como unidad, mejorando el rendimiento y la organización del código PL/SQL.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Detalle</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Toast notifications -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="farmacia_carol.js"></script>
+</body>
+</html>

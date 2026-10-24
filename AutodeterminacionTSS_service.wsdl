@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  WSDL: Servicio de Integración RH ↔ TSS
+  Empresa: Ferretería Americana, S.R.L.
+  Versión: 1.0
+  Descripción: Contrato del web service SOAP que permite al sistema de RH
+               de Ferretería Americana enviar la autodeterminación a la TSS
+               y consultar el estado de envíos previos.
+  Protocolo:   SOAP 1.1 sobre HTTP/S
+-->
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema"
+             xmlns:tns="http://www.ferreteriaamericana.com.do/rh/ws/autodeterminacion"
+             xmlns:fa="http://www.ferreteriaamericana.com.do/rh/autodeterminacion"
+             targetNamespace="http://www.ferreteriaamericana.com.do/rh/ws/autodeterminacion"
+             name="AutodeterminacionTSSService">
+
+  <!-- ======================== TIPOS ======================== -->
+  <types>
+    <xs:schema targetNamespace="http://www.ferreteriaamericana.com.do/rh/ws/autodeterminacion"
+               xmlns:tns="http://www.ferreteriaamericana.com.do/rh/ws/autodeterminacion"
+               elementFormDefault="qualified">
+
+      <!-- Importar el esquema de autodeterminación -->
+      <xs:import namespace="http://www.ferreteriaamericana.com.do/rh/autodeterminacion"
+                 schemaLocation="AutodeterminacionTSS.xsd"/>
+
+      <!-- === REQUEST: Envío de Autodeterminación === -->
+      <xs:element name="EnviarAutodeterminacionRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Credenciales">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Usuario"    type="xs:string"/>
+                  <xs:element name="Clave"      type="xs:string"/>
+                  <xs:element name="RNC"        type="xs:string"/>
+                  <xs:element name="TokenSesion" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element ref="fa:AutodeterminacionTSS"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <!-- === RESPONSE: Confirmación de Envío === -->
+      <xs:element name="EnviarAutodeterminacionResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Exitoso"         type="xs:boolean"/>
+            <xs:element name="CodigoRespuesta" type="xs:string"/>
+            <xs:element name="Mensaje"         type="xs:string"/>
+            <xs:element name="NumeroConfirmacion" type="xs:string" minOccurs="0"/>
+            <xs:element name="FechaRecepcion"    type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="Errores" minOccurs="0">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Error" maxOccurs="unbounded">
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element name="Codigo"      type="xs:string"/>
+                        <xs:element name="Campo"       type="xs:string"/>
+                        <xs:element name="Descripcion" type="xs:string"/>
+                        <xs:element name="Secuencia"   type="xs:integer" minOccurs="0"/>
+                      </xs:sequence>
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <!-- === REQUEST: Validar estructura antes de envío === -->
+      <xs:element name="ValidarEstructuraRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="fa:AutodeterminacionTSS"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <!-- === RESPONSE: Resultado de validación === -->
+      <xs:element name="ValidarEstructuraResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="EstructuraValida"  type="xs:boolean"/>
+            <xs:element name="TotalErrores"      type="xs:integer"/>
+            <xs:element name="TotalAdvertencias"  type="xs:integer"/>
+            <xs:element name="Observaciones" minOccurs="0">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Observacion" maxOccurs="unbounded">
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element name="Tipo"        type="xs:string"/>  <!-- ERROR | ADVERTENCIA -->
+                        <xs:element name="Codigo"      type="xs:string"/>
+                        <xs:element name="Campo"       type="xs:string"/>
+                        <xs:element name="Descripcion" type="xs:string"/>
+                        <xs:element name="Secuencia"   type="xs:integer" minOccurs="0"/>
+                      </xs:sequence>
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <!-- === REQUEST: Consultar estado de un envío === -->
+      <xs:element name="ConsultarEstadoRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Credenciales">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Usuario"    type="xs:string"/>
+                  <xs:element name="Clave"      type="xs:string"/>
+                  <xs:element name="RNC"        type="xs:string"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="NumeroConfirmacion" type="xs:string"/>
+            <xs:element name="Periodo"            type="xs:string" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <!-- === RESPONSE: Estado del envío === -->
+      <xs:element name="ConsultarEstadoResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Encontrado"          type="xs:boolean"/>
+            <xs:element name="NumeroConfirmacion"  type="xs:string" minOccurs="0"/>
+            <xs:element name="Estado"              type="xs:string" minOccurs="0"/>
+            <xs:element name="FechaEnvio"          type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="FechaProcesamiento"  type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="Periodo"             type="xs:string" minOccurs="0"/>
+            <xs:element name="CantidadTrabajadores" type="xs:integer" minOccurs="0"/>
+            <xs:element name="MontoTotal"          type="xs:decimal" minOccurs="0"/>
+            <xs:element name="Mensaje"             type="xs:string" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+    </xs:schema>
+  </types>
+
+  <!-- ====================== MENSAJES ====================== -->
+
+  <message name="EnviarAutodeterminacionInput">
+    <part name="parameters" element="tns:EnviarAutodeterminacionRequest"/>
+  </message>
+  <message name="EnviarAutodeterminacionOutput">
+    <part name="parameters" element="tns:EnviarAutodeterminacionResponse"/>
+  </message>
+
+  <message name="ValidarEstructuraInput">
+    <part name="parameters" element="tns:ValidarEstructuraRequest"/>
+  </message>
+  <message name="ValidarEstructuraOutput">
+    <part name="parameters" element="tns:ValidarEstructuraResponse"/>
+  </message>
+
+  <message name="ConsultarEstadoInput">
+    <part name="parameters" element="tns:ConsultarEstadoRequest"/>
+  </message>
+  <message name="ConsultarEstadoOutput">
+    <part name="parameters" element="tns:ConsultarEstadoResponse"/>
+  </message>
+
+  <!-- ===================== PORT TYPE ====================== -->
+
+  <portType name="AutodeterminacionPortType">
+    <documentation>
+      Operaciones del servicio de Auto-determinación TSS
+      para Ferretería Americana, S.R.L.
+    </documentation>
+
+    <operation name="EnviarAutodeterminacion">
+      <documentation>
+        Envía el lote de autodeterminación del período al web service
+        proxy que se comunica con el SUIR Plus de la TSS.
+      </documentation>
+      <input message="tns:EnviarAutodeterminacionInput"/>
+      <output message="tns:EnviarAutodeterminacionOutput"/>
+    </operation>
+
+    <operation name="ValidarEstructura">
+      <documentation>
+        Valida la estructura y los datos del XML de autodeterminación
+        antes de enviarlo. Permite corregir errores proactivamente.
+      </documentation>
+      <input message="tns:ValidarEstructuraInput"/>
+      <output message="tns:ValidarEstructuraOutput"/>
+    </operation>
+
+    <operation name="ConsultarEstado">
+      <documentation>
+        Consulta el estado de un envío previo usando su número de
+        confirmación o el período de referencia.
+      </documentation>
+      <input message="tns:ConsultarEstadoInput"/>
+      <output message="tns:ConsultarEstadoOutput"/>
+    </operation>
+  </portType>
+
+  <!-- ====================== BINDING ======================= -->
+
+  <binding name="AutodeterminacionSOAPBinding" type="tns:AutodeterminacionPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+    <operation name="EnviarAutodeterminacion">
+      <soap:operation soapAction="http://www.ferreteriaamericana.com.do/rh/ws/EnviarAutodeterminacion"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+
+    <operation name="ValidarEstructura">
+      <soap:operation soapAction="http://www.ferreteriaamericana.com.do/rh/ws/ValidarEstructura"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+
+    <operation name="ConsultarEstado">
+      <soap:operation soapAction="http://www.ferreteriaamericana.com.do/rh/ws/ConsultarEstado"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- ====================== SERVICIO ====================== -->
+
+  <service name="AutodeterminacionTSSService">
+    <documentation>
+      Web Service SOAP para la integración entre el sistema de Recursos
+      Humanos de Ferretería Americana, S.R.L. y la Tesorería de la
+      Seguridad Social (TSS) de la República Dominicana.
+
+      Este servicio actúa como middleware/proxy entre el sistema RH
+      propietario y la plataforma SUIR Plus de la TSS, transformando
+      los datos de nómina al formato requerido por el SDSS.
+    </documentation>
+    <port name="AutodeterminacionPort" binding="tns:AutodeterminacionSOAPBinding">
+      <soap:address location="https://rh.ferreteriaamericana.com.do/ws/autodeterminacion"/>
+    </port>
+  </service>
+
+</definitions>

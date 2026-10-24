@@ -1,0 +1,5 @@
+# Logs y temporales
+*.log
+scratch/
+.system_generated/
+setup_git.ps1

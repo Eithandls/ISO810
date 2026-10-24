@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Esquema: Interfaz RH (Nómina) -> TSS / SUIR Plus
+  Empresa: Ferretería Americana, S.R.L.
+  Versión: 1.0
+  Descripción: Define la estructura XML para el proceso de Auto-determinación
+               y Novedades del Sistema Dominicano de Seguridad Social (SDSS).
+               Basado en el instructivo oficial de la TSS v6.
+  Estándar:   ISO 20022 (inspiración), SDSS / Ley 87-01
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://www.ferreteriaamericana.com.do/rh/autodeterminacion"
+           xmlns:fa="http://www.ferreteriaamericana.com.do/rh/autodeterminacion"
+           targetNamespace="http://www.ferreteriaamericana.com.do/rh/autodeterminacion"
+           elementFormDefault="qualified"
+           version="1.0">
+
+  <!-- ===================== TIPOS SIMPLES ===================== -->
+
+  <!-- 1. RNC del empleador: 9 dígitos sin guiones -->
+  <xs:simpleType name="RNCType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{9}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- 2. Tipo de documento de identidad del trabajador -->
+  <xs:simpleType name="TipoDocumentoType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="C"/>  <!-- Cédula -->
+      <xs:enumeration value="P"/>  <!-- Pasaporte -->
+      <xs:enumeration value="N"/>  <!-- NSS (Número de Seguridad Social) -->
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- 3. Número de cédula dominicana: 11 dígitos sin guiones -->
+  <xs:simpleType name="CedulaType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z0-9]{6,20}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- 4. NSS: Número de Seguridad Social -->
+  <xs:simpleType name="NSSType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{1,12}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- 5. Tipo de novedad según catálogo TSS -->
+  <xs:simpleType name="TipoNovedadType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NR"/>  <!-- Registro nuevo / Sin novedad -->
+      <xs:enumeration value="IN"/>  <!-- Ingreso / Reingreso -->
+      <xs:enumeration value="SA"/>  <!-- Salida / Desahucio -->
+      <xs:enumeration value="LM"/>  <!-- No laboró mes completo -->
+      <xs:enumeration value="VC"/>  <!-- Trabajador ocasional -->
+      <xs:enumeration value="LS"/>  <!-- Licencia sin sueldo -->
+      <xs:enumeration value="AU"/>  <!-- Aumento de salario -->
+      <xs:enumeration value="DS"/>  <!-- Disminución de salario -->
+      <xs:enumeration value="CO"/>  <!-- Corrección de datos -->
+      <xs:enumeration value="SU"/>  <!-- Suspensión -->
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- 6. Tipo de ingreso del trabajador -->
+  <xs:simpleType name="TipoIngresoType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="F"/>   <!-- Fijo -->
+      <xs:enumeration value="V"/>   <!-- Variable (por horas/comisión) -->
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- 7. Sexo del trabajador -->
+  <xs:simpleType name="SexoType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="M"/>
+      <xs:enumeration value="F"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- 8. Monto monetario: hasta 13 enteros, 2 decimales -->
+  <xs:simpleType name="MontoType">
+    <xs:restriction base="xs:decimal">
+      <xs:totalDigits value="15"/>
+      <xs:fractionDigits value="2"/>
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- 9. Monto estrictamente positivo -->
+  <xs:simpleType name="MontoPositivoType">
+    <xs:restriction base="xs:decimal">
+      <xs:totalDigits value="15"/>
+      <xs:fractionDigits value="2"/>
+      <xs:minExclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- 10. Porcentaje: 0.00 a 100.00 -->
+  <xs:simpleType name="PorcentajeType">
+    <xs:restriction base="xs:decimal">
+      <xs:totalDigits value="5"/>
+      <xs:fractionDigits value="2"/>
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="100"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- 11. Período de reporte: AAAAMM -->
+  <xs:simpleType name="PeriodoType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{4}(0[1-9]|1[0-2])"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- 12. Nombre de persona -->
+  <xs:simpleType name="NombreType">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="60"/>
+      <xs:whiteSpace value="collapse"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- 13. Moneda ISO 4217 -->
+  <xs:simpleType name="MonedaType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z]{3}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- 14. Estado de procesamiento -->
+  <xs:simpleType name="EstadoProcesamientoType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="PENDIENTE"/>
+      <xs:enumeration value="VALIDADO"/>
+      <xs:enumeration value="ENVIADO"/>
+      <xs:enumeration value="ACEPTADO"/>
+      <xs:enumeration value="RECHAZADO"/>
+      <xs:enumeration value="CON_ERRORES"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- ===================== TIPOS COMPLEJOS ===================== -->
+
+  <!-- Datos del empleador -->
+  <xs:complexType name="EmpleadorType">
+    <xs:sequence>
+      <xs:element name="RNC"            type="RNCType"/>
+      <xs:element name="RazonSocial"    type="xs:string"/>
+      <xs:element name="NombreComercial" type="xs:string" minOccurs="0"/>
+      <xs:element name="SectorEconomico" type="xs:string" minOccurs="0"/>
+      <xs:element name="RepresentanteLegal" type="NombreType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Desglose de aportes calculados por el sistema de RH -->
+  <xs:complexType name="AportesSDSSType">
+    <xs:sequence>
+      <!-- Seguro Familiar de Salud (SFS) -->
+      <xs:element name="SFS_Empleador"     type="MontoType"/>
+      <xs:element name="SFS_Trabajador"    type="MontoType"/>
+      <xs:element name="SFS_Total"         type="MontoType"/>
+      <!-- Administradora de Fondos de Pensiones (AFP) -->
+      <xs:element name="AFP_Empleador"     type="MontoType"/>
+      <xs:element name="AFP_Trabajador"    type="MontoType"/>
+      <xs:element name="AFP_Total"         type="MontoType"/>
+      <!-- Seguro de Riesgos Laborales (SRL) - solo empleador -->
+      <xs:element name="SRL_Empleador"     type="MontoType"/>
+      <!-- Aporte voluntario a pensiones -->
+      <xs:element name="AporteVoluntario"  type="MontoType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Información salarial para DGII e INFOTEP -->
+  <xs:complexType name="InformacionSalarialType">
+    <xs:sequence>
+      <xs:element name="SalarioCotizableSDSS"  type="MontoType"/>
+      <xs:element name="SalarioISR"             type="MontoType" minOccurs="0"/>
+      <xs:element name="SalarioINFOTEP"         type="MontoType" minOccurs="0"/>
+      <xs:element name="OtrasRemuneraciones"    type="MontoType" minOccurs="0"/>
+      <xs:element name="HorasExtraordinarias"   type="MontoType" minOccurs="0"/>
+      <xs:element name="Comisiones"             type="MontoType" minOccurs="0"/>
+      <xs:element name="Incentivos"             type="MontoType" minOccurs="0"/>
+      <xs:element name="Vacaciones"             type="MontoType" minOccurs="0"/>
+      <xs:element name="RegaliaPascual"         type="MontoType" minOccurs="0"/>
+      <xs:element name="IngresosExentos"        type="MontoType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Trabajador (línea de detalle de autodeterminación) -->
+  <xs:complexType name="TrabajadorType">
+    <xs:sequence>
+      <xs:element name="TipoDocumento"       type="TipoDocumentoType"/>
+      <xs:element name="NumeroDocumento"     type="CedulaType"/>
+      <xs:element name="NSS"                type="NSSType" minOccurs="0"/>
+      <xs:element name="Nombres"            type="NombreType"/>
+      <xs:element name="Apellido1"          type="NombreType"/>
+      <xs:element name="Apellido2"          type="NombreType" minOccurs="0"/>
+      <xs:element name="Sexo"              type="SexoType"/>
+      <xs:element name="FechaNacimiento"    type="xs:date"/>
+      <xs:element name="FechaIngreso"       type="xs:date"/>
+      <xs:element name="FechaSalida"        type="xs:date" minOccurs="0"/>
+      <xs:element name="TipoNovedad"        type="TipoNovedadType"/>
+      <xs:element name="TipoIngreso"        type="TipoIngresoType"/>
+      <xs:element name="InformacionSalarial" type="InformacionSalarialType"/>
+      <xs:element name="Aportes"            type="AportesSDSSType"/>
+    </xs:sequence>
+    <xs:attribute name="secuencia" type="xs:positiveInteger" use="required"/>
+  </xs:complexType>
+
+  <!-- Totales de control del lote -->
+  <xs:complexType name="TotalesControlType">
+    <xs:sequence>
+      <xs:element name="CantidadTrabajadores"   type="xs:positiveInteger"/>
+      <xs:element name="TotalSalariosCotizables" type="MontoPositivoType"/>
+      <xs:element name="TotalAporteSFS"          type="MontoPositivoType"/>
+      <xs:element name="TotalAporteAFP"          type="MontoPositivoType"/>
+      <xs:element name="TotalAporteSRL"          type="MontoPositivoType"/>
+      <xs:element name="TotalAporteEmpleador"    type="MontoPositivoType"/>
+      <xs:element name="TotalAporteTrabajador"   type="MontoPositivoType"/>
+      <xs:element name="MontoTotalSDSS"          type="MontoPositivoType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ===================== ELEMENTO RAÍZ ===================== -->
+
+  <xs:element name="AutodeterminacionTSS">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Empleador"    type="EmpleadorType"/>
+        <xs:element name="Trabajadores">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Trabajador" type="TrabajadorType"
+                          minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+          <!-- Número de secuencia único dentro del lote -->
+          <xs:unique name="SecuenciaTrabajadorUnica">
+            <xs:selector xpath="fa:Trabajador"/>
+            <xs:field xpath="@secuencia"/>
+          </xs:unique>
+          <!-- Documento de identidad no se repite -->
+          <xs:unique name="DocumentoUnico">
+            <xs:selector xpath="fa:Trabajador"/>
+            <xs:field xpath="fa:NumeroDocumento"/>
+          </xs:unique>
+        </xs:element>
+        <xs:element name="TotalesControl" type="TotalesControlType"/>
+      </xs:sequence>
+      <xs:attribute name="sistemaOrigen"    type="xs:string"   use="required" fixed="RRHH_FERRETERIA_AMERICANA"/>
+      <xs:attribute name="periodo"          type="PeriodoType" use="required"/>
+      <xs:attribute name="fechaGeneracion"  type="xs:dateTime" use="required"/>
+      <xs:attribute name="moneda"           type="MonedaType"  default="DOP"/>
+      <xs:attribute name="version"          type="xs:string"   default="1.0"/>
+      <xs:attribute name="estado"           type="EstadoProcesamientoType" default="PENDIENTE"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
