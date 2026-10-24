@@ -1,9 +1,9 @@
 /* ============================================================
-   Farmacia Carol — Integración BD: Facturación ➔ Cuentas x Cobrar
-   Lógica Simplificada y Enfocada en la Demostración del Trigger
+   Integración BD: Facturación y Cuentas por Cobrar
+   Lógica Simplificada, Profesional y sin Emojis
    ============================================================ */
 
-// Secuencias simuladas de Oracle
+// Secuencias simuladas
 let SEQ_FACTURA = 1004;
 let SEQ_CXC = 3001;
 
@@ -25,7 +25,7 @@ let FACTURAS = [
     fecha_emision: '2026-10-21',
     monto_total: 1850.00,
     condiciones_pago: 'CONTADO',
-    concepto: 'Analgesicos y vitaminas venta directa'
+    concepto: 'Analgésicos y vitaminas venta directa'
   },
   {
     id_factura: 'FAC-1003',
@@ -60,10 +60,8 @@ let CUENTAS_POR_COBRAR = [
   }
 ];
 
-// ======================== INICIALIZACIÓN ========================
-
+// Inicialización
 document.addEventListener('DOMContentLoaded', () => {
-  // Ajustar fecha de hoy por defecto
   const hoy = new Date().toISOString().slice(0, 10);
   document.getElementById('fechaEmision').value = hoy;
   document.getElementById('numFactura').value = `FAC-${SEQ_FACTURA}`;
@@ -72,8 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCxC();
 });
 
-// ======================== GUARDAR FACTURA (TRIGGER) ========================
-
+// Guardar Factura
 function guardarFactura(event) {
   event.preventDefault();
 
@@ -87,11 +84,11 @@ function guardarFactura(event) {
   const concepto = document.getElementById('conceptoFactura').value;
 
   if (isNaN(monto_total) || monto_total <= 0) {
-    alert('Por favor ingrese un monto válido.');
+    alert('Ingrese un monto válido.');
     return;
   }
 
-  // 1. INSERCIÓN EN LA TABLA "FACTURAS"
+  // Inserción en FACTURAS
   const nuevaFactura = {
     id_factura,
     id_cliente,
@@ -104,29 +101,26 @@ function guardarFactura(event) {
 
   FACTURAS.unshift(nuevaFactura);
 
-  // 2. DISPARO DEL TRIGGER "TRG_FACTURA_A_CXC" (Simulación de Oracle)
+  // Ejecución del Trigger
   ejecutarTriggerOracle(nuevaFactura);
 
-  // Actualizar vistas
+  // Renderizar
   renderFacturas(id_factura);
   renderCxC(condiciones_pago === 'CREDITO' ? nuevaFactura.id_factura : null);
 
-  // Avanzar correlativo y limpiar formulario para el próximo registro
+  // Siguiente correlativo
   SEQ_FACTURA++;
   document.getElementById('numFactura').value = `FAC-${SEQ_FACTURA}`;
   document.getElementById('montoTotal').value = '';
   document.getElementById('conceptoFactura').value = '';
 }
 
-// ======================== MOTOR DEL TRIGGER ========================
-
+// Lógica del Trigger
 function ejecutarTriggerOracle(rowNew) {
   const consoleBody = document.getElementById('consoleBody');
   const hora = new Date().toLocaleTimeString();
 
-  // EVALUACIÓN DE LA CONDICIÓN:
   if (rowNew.condiciones_pago === 'CREDITO') {
-    // CONDICIÓN CUMPLIDA: ES A CRÉDITO ➔ GENERA DEUDA
     SEQ_CXC++;
     const nuevoIdCxC = SEQ_CXC;
 
@@ -142,16 +136,15 @@ function ejecutarTriggerOracle(rowNew) {
 
     CUENTAS_POR_COBRAR.unshift(nuevaCxC);
 
-    // Registro visual en la consola
     consoleBody.innerHTML = `
       <div class="log-entry credit">
         <div class="log-header">
-          <span>⚡ TRIGGER DISPARADO: TRG_FACTURA_A_CXC [AFTER INSERT]</span>
-          <span class="tag">CRÉDITO APROBADO</span>
+          <span>TRIGGER EJECUTADO: TRG_FACTURA_A_CXC (AFTER INSERT)</span>
+          <span class="tag">CRÉDITO</span>
           <span class="log-time">${hora}</span>
         </div>
         <div class="log-detail">
-          El campo <code>condiciones_pago</code> es <strong>CRÉDITO</strong>. El trigger leyó los datos de la factura <strong>${rowNew.id_factura}</strong> y creó automáticamente la cuenta por cobrar <strong>#${nuevoIdCxC}</strong> por valor de <strong>RD$ ${fmt(rowNew.monto_total)}</strong> para el cliente <strong>${rowNew.cliente_nombre}</strong>.
+          Factura <strong>${rowNew.id_factura}</strong> es a CRÉDITO. El trigger leyó los datos e insertó automáticamente en <code>CUENTAS_POR_COBRAR</code> el registro <strong>#${nuevoIdCxC}</strong> por <strong>RD$ ${fmt(rowNew.monto_total)}</strong> para el cliente <strong>${rowNew.cliente_nombre}</strong>.
         </div>
         <div class="log-sql">
           INSERT INTO CUENTAS_POR_COBRAR (id_cxc, id_factura, id_cliente, fecha_cxc, monto_deuda, estado)<br>
@@ -160,30 +153,27 @@ function ejecutarTriggerOracle(rowNew) {
       </div>
     ` + consoleBody.innerHTML;
 
-    showToast(`⚡ Trigger: Cuenta por cobrar #${nuevoIdCxC} generada para ${rowNew.cliente_nombre}`, 'credit');
+    showToast(`Cuenta por cobrar #${nuevoIdCxC} generada para ${rowNew.cliente_nombre}`, 'credit');
 
   } else {
-    // CONDICIÓN NO CUMPLIDA: ES AL CONTADO ➔ NO GENERA DEUDA
     consoleBody.innerHTML = `
       <div class="log-entry cash">
         <div class="log-header">
-          <span>ℹ️ TRIGGER EVALUADO: TRG_FACTURA_A_CXC</span>
-          <span class="tag">VENTA CONTADO</span>
+          <span>TRIGGER EVALUADO: TRG_FACTURA_A_CXC</span>
+          <span class="tag">CONTADO</span>
           <span class="log-time">${hora}</span>
         </div>
         <div class="log-detail">
-          La factura <strong>${rowNew.id_factura}</strong> es al <strong>CONTADO</strong>. La condición <code>IF :NEW.condiciones_pago = 'CREDITO'</code> resultó <strong>FALSA</strong>.<br>
-          ➔ El trigger finalizó sin insertar registros en <code>CUENTAS_POR_COBRAR</code> (No genera deuda).
+          Factura <strong>${rowNew.id_factura}</strong> es al CONTADO. La condición <code>IF :NEW.condiciones_pago = 'CREDITO'</code> no se cumple. El trigger no inserta registros en <code>CUENTAS_POR_COBRAR</code>.
         </div>
       </div>
     ` + consoleBody.innerHTML;
 
-    showToast(`ℹ️ Venta al Contado: Factura ${rowNew.id_factura} no genera deuda`, 'cash');
+    showToast(`Factura ${rowNew.id_factura} al contado: no genera deuda`, 'cash');
   }
 }
 
-// ======================== RENDER DE TABLAS ========================
-
+// Renders
 function renderFacturas(highlightId = null) {
   const tbody = document.getElementById('tbodyFacturas');
   const countBadge = document.getElementById('countFacturas');
@@ -216,7 +206,7 @@ function renderFacturas(highlightId = null) {
 function renderCxC(highlightFacturaId = null) {
   const tbody = document.getElementById('tbodyCxC');
   const countBadge = document.getElementById('countCxC');
-  countBadge.textContent = `${CUENTAS_POR_COBRAR.length} deudas activas`;
+  countBadge.textContent = `${CUENTAS_POR_COBRAR.length} deudas`;
 
   if (CUENTAS_POR_COBRAR.length === 0) {
     tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No hay cuentas por cobrar generadas</td></tr>';
@@ -228,7 +218,7 @@ function renderCxC(highlightFacturaId = null) {
 
     return `
       <tr class="${isNew}">
-        <td><span style="color:var(--primary-light); font-weight:700;">#${c.id_cxc}</span></td>
+        <td><span style="color:var(--primary-light); font-weight:600;">#${c.id_cxc}</span></td>
         <td><strong>${c.id_factura}</strong></td>
         <td>${c.id_cliente}</td>
         <td>${c.fecha_cxc}</td>
@@ -239,8 +229,7 @@ function renderCxC(highlightFacturaId = null) {
   }).join('');
 }
 
-// ======================== BOTONES RÁPIDOS DE EJEMPLO ========================
-
+// Botones rápidos
 function cargarEjemplo(tipo) {
   const selectCliente = document.getElementById('clienteSelect');
   const inputMonto = document.getElementById('montoTotal');
@@ -248,31 +237,21 @@ function cargarEjemplo(tipo) {
   const inputConcepto = document.getElementById('conceptoFactura');
 
   if (tipo === 'CREDITO') {
-    selectCliente.value = '101'; // Centro Médico Nacional
+    selectCliente.value = '101';
     inputMonto.value = '18500.00';
     selectCondicion.value = 'CREDITO';
     inputConcepto.value = 'Lote de antibióticos y analgésicos hospitalarios';
-    showToast('Ejemplo a CRÉDITO cargado. Pulsa "Guardar Factura" para disparar el trigger.', 'credit');
+    showToast('Ejemplo a crédito cargado. Presione Guardar Factura.', 'credit');
   } else {
-    selectCliente.value = '105'; // Particular
+    selectCliente.value = '105';
     inputMonto.value = '2350.00';
     selectCondicion.value = 'CONTADO';
     inputConcepto.value = 'Medicamentos de venta libre y vitaminas';
-    showToast('Ejemplo al CONTADO cargado. Pulsa "Guardar Factura" para ver que no genera CxC.', 'cash');
+    showToast('Ejemplo al contado cargado. Presione Guardar Factura.', 'cash');
   }
 }
 
-function actualizarPrevisualizacion() {
-  const cond = document.getElementById('condicionesPago').value;
-  if (cond === 'CREDITO') {
-    showToast('Modo CRÉDITO: Esta factura generará una cuenta por cobrar automáticamente.', 'credit');
-  } else {
-    showToast('Modo CONTADO: Esta factura NO generará cuenta por cobrar.', 'cash');
-  }
-}
-
-// ======================== UTILIDADES ========================
-
+// Utilidades
 function fmt(n) {
   return Number(n).toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
@@ -281,13 +260,13 @@ function showToast(message, type = 'credit') {
   const container = document.getElementById('toastContainer');
   const toast = document.createElement('div');
   toast.className = `toast toast-${type}`;
-  toast.innerHTML = message;
+  toast.textContent = message;
   container.appendChild(toast);
 
   setTimeout(() => {
     toast.style.opacity = '0';
-    toast.style.transform = 'translateY(10px)';
-    toast.style.transition = 'all 0.3s ease';
-    setTimeout(() => toast.remove(), 300);
-  }, 4000);
+    toast.style.transform = 'translateY(6px)';
+    toast.style.transition = 'all 0.2s ease';
+    setTimeout(() => toast.remove(), 250);
+  }, 3500);
 }

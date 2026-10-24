@@ -3,28 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Integración de BD con Triggers | Facturación ➔ Cuentas por Cobrar</title>
+  <title>Integración de Facturación y Cuentas por Cobrar</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="farmacia_carol.css">
 </head>
 <body>
 
-  <!-- Top Banner -->
+  <!-- Encabezado Principal -->
   <header class="app-header">
     <div class="header-container">
       <div class="brand">
-        <div class="brand-badge">ISO810</div>
+        <span class="brand-tag">ISO810</span>
         <div>
-          <h1>Integración entre Tablas mediante Triggers</h1>
-          <p>Demostración práctica: <strong>Facturación ➔ Cuentas por Cobrar</strong> (Farmacia Carol)</p>
+          <h1>Integración de Base de Datos mediante Trigger</h1>
+          <p>Módulo de Facturación y Cuentas por Cobrar</p>
         </div>
       </div>
       <div class="header-actions">
-        <a href="farmacia_carol_db.sql" download class="btn-download">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Descargar Script .SQL
+        <a href="farmacia_carol_db.sql" download class="btn-secondary">
+          Descargar Script SQL
         </a>
       </div>
     </div>
@@ -32,113 +31,85 @@
 
   <main class="main-container">
 
-    <!-- INTRO / EXPLICACIÓN BREVE -->
-    <section class="banner-concept">
-      <div class="concept-icon">⚡</div>
-      <div class="concept-text">
-        <h3>¿Cómo funciona este Trigger de Integración?</h3>
-        <p>
-          Al guardar una factura en la tabla <code>FACTURAS</code>, el disparador evalúa el campo <code>condiciones_pago</code>:
-          <br>
-          • Si es <strong>CRÉDITO</strong> ➔ El trigger extrae automáticamente el <em>ID de Factura, ID de Cliente, Fecha y Monto</em> e <strong>inserta la deuda en <code>CUENTAS_POR_COBRAR</code></strong>.
-          <br>
-          • Si es <strong>CONTADO</strong> ➔ No genera ninguna deuda. El trigger evalúa la condición, la ignora y <strong>no guarda nada en Cuentas por Cobrar</strong>.
-        </p>
-      </div>
-    </section>
-
-    <!-- FORMULARIO SENCILLO DE REGISTRO DE FACTURA -->
-    <section class="card form-card">
+    <!-- Formulario de Registro de Factura -->
+    <section class="card">
       <div class="card-header">
-        <div class="card-title">
-          <span class="icon">📝</span>
-          <h2>Registrar Factura en la Base de Datos</h2>
-        </div>
-        <div class="demo-buttons">
-          <button type="button" class="btn-quick credit" onclick="cargarEjemplo('CREDITO')">⚡ Ejemplo a Crédito</button>
-          <button type="button" class="btn-quick cash" onclick="cargarEjemplo('CONTADO')">⚡ Ejemplo al Contado</button>
+        <h2>Registro de Factura</h2>
+        <div class="quick-actions">
+          <button type="button" class="btn-subtle" onclick="cargarEjemplo('CREDITO')">Cargar Crédito</button>
+          <button type="button" class="btn-subtle" onclick="cargarEjemplo('CONTADO')">Cargar Contado</button>
         </div>
       </div>
 
       <form id="formFactura" onsubmit="guardarFactura(event)" class="form-grid">
         <div class="form-group">
           <label for="numFactura">No. Factura</label>
-          <input type="text" id="numFactura" required placeholder="FAC-1005" readonly>
+          <input type="text" id="numFactura" required readonly>
         </div>
 
         <div class="form-group">
-          <label for="clienteSelect">Cliente (ID y Nombre)</label>
+          <label for="clienteSelect">Cliente</label>
           <select id="clienteSelect" required>
-            <option value="101" data-nombre="Centro Médico Nacional">101 — Centro Médico Nacional</option>
-            <option value="102" data-nombre="Clínica Abreu">102 — Clínica Abreu</option>
-            <option value="103" data-nombre="Hospital Dr. Moscoso Puello">103 — Hospital Dr. Moscoso Puello</option>
-            <option value="104" data-nombre="Farmacia Popular Sucursal">104 — Farmacia Popular Sucursal</option>
-            <option value="105" data-nombre="Juan Pérez Almonte">105 — Juan Pérez Almonte (Particular)</option>
+            <option value="101" data-nombre="Centro Médico Nacional">101 - Centro Médico Nacional</option>
+            <option value="102" data-nombre="Clínica Abreu">102 - Clínica Abreu</option>
+            <option value="103" data-nombre="Hospital Dr. Moscoso Puello">103 - Hospital Dr. Moscoso Puello</option>
+            <option value="104" data-nombre="Farmacia Popular">104 - Farmacia Popular</option>
+            <option value="105" data-nombre="Juan Pérez Almonte">105 - Juan Pérez Almonte</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label for="fechaEmision">Fecha de Factura</label>
+          <label for="fechaEmision">Fecha</label>
           <input type="date" id="fechaEmision" required>
         </div>
 
         <div class="form-group">
           <label for="montoTotal">Monto Total (RD$)</label>
-          <input type="number" id="montoTotal" min="1" step="0.01" required placeholder="8500.00">
+          <input type="number" id="montoTotal" min="1" step="0.01" required placeholder="0.00">
         </div>
 
-        <div class="form-group highlight-group">
-          <label for="condicionesPago">
-            Condiciones de Pago
-            <span class="badge-eval">Campo Evaluado por el Trigger</span>
-          </label>
-          <select id="condicionesPago" required onchange="actualizarPrevisualizacion()">
-            <option value="CREDITO">CRÉDITO ➔ (El Trigger Creará la CxC)</option>
-            <option value="CONTADO">CONTADO ➔ (El Trigger NO creará deuda)</option>
+        <div class="form-group">
+          <label for="condicionesPago">Condiciones de Pago</label>
+          <select id="condicionesPago" required>
+            <option value="CREDITO">CRÉDITO (Genera cuenta por cobrar)</option>
+            <option value="CONTADO">CONTADO (No genera cuenta por cobrar)</option>
           </select>
         </div>
 
         <div class="form-group span-full">
-          <label for="conceptoFactura">Concepto / Medicamentos</label>
-          <input type="text" id="conceptoFactura" placeholder="Suministro de medicamentos hospitalarios y antibióticos" required>
+          <label for="conceptoFactura">Concepto</label>
+          <input type="text" id="conceptoFactura" placeholder="Descripción de los medicamentos o servicios suministrados" required>
         </div>
 
         <div class="form-actions span-full">
           <button type="submit" class="btn-primary" id="btnGuardar">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-            Guardar Factura (Ejecutar Trigger)
+            Guardar Factura
           </button>
         </div>
       </form>
     </section>
 
-    <!-- MONITOR DE EJECUCIÓN DEL TRIGGER EN VIVO -->
-    <section class="card trigger-console-card">
+    <!-- Monitor de Eventos del Trigger -->
+    <section class="card">
       <div class="card-header">
-        <div class="card-title">
-          <span class="icon">⚡</span>
-          <h2>Monitoreo en Tiempo Real del Disparador</h2>
-        </div>
-        <span class="pulse-indicator"><span class="pulse-dot"></span> Trigger Activo en Oracle</span>
+        <h2>Registro de Ejecución del Disparador</h2>
+        <span class="status-indicator">Trigger Activo en Base de Datos</span>
       </div>
       <div class="console-body" id="consoleBody">
         <div class="console-initial">
-          Esperando nueva inserción en la tabla <code>FACTURAS</code>... Usa el formulario superior o los botones rápidos para probar.
+          No hay eventos recientes. Guarde una factura para observar la evaluación del trigger.
         </div>
       </div>
     </section>
 
-    <!-- DOS TABLAS DE RESULTADOS LADO A LADO -->
+    <!-- Tablas Lado a Lado -->
     <div class="tables-layout">
       
-      <!-- TABLA 1: FACTURAS -->
-      <section class="card table-card">
+      <!-- Tabla 1: FACTURAS -->
+      <section class="card">
         <div class="card-header">
-          <div class="card-title">
-            <span class="icon">📋</span>
-            <h2>Tabla: FACTURAS</h2>
-          </div>
-          <span class="count-badge" id="countFacturas">0 registros</span>
+          <h2>Tabla: FACTURAS</h2>
+          <span class="counter-badge" id="countFacturas">0 registros</span>
         </div>
         <div class="table-responsive">
           <table class="data-table">
@@ -158,14 +129,11 @@
         </div>
       </section>
 
-      <!-- TABLA 2: CUENTAS POR COBRAR -->
-      <section class="card table-card cxc-card">
+      <!-- Tabla 2: CUENTAS_POR_COBRAR -->
+      <section class="card">
         <div class="card-header">
-          <div class="card-title">
-            <span class="icon">💰</span>
-            <h2>Tabla: CUENTAS_POR_COBRAR</h2>
-          </div>
-          <span class="count-badge cxc-badge" id="countCxC">0 deudas</span>
+          <h2>Tabla: CUENTAS_POR_COBRAR</h2>
+          <span class="counter-badge" id="countCxC">0 deudas</span>
         </div>
         <div class="table-responsive">
           <table class="data-table">
@@ -174,13 +142,13 @@
                 <th>ID CxC</th>
                 <th>No. Factura</th>
                 <th>ID Cliente</th>
-                <th>Fecha CxC</th>
+                <th>Fecha</th>
                 <th>Monto Deuda</th>
                 <th>Estado</th>
               </tr>
             </thead>
             <tbody id="tbodyCxC">
-              <!-- Se puebla dinámicamente por el trigger -->
+              <!-- Se puebla dinámicamente -->
             </tbody>
           </table>
         </div>
@@ -188,69 +156,8 @@
 
     </div>
 
-    <!-- SECCIÓN DE DEFENSA: CÓDIGO DEL TRIGGER -->
-    <section class="card code-defense-card">
-      <div class="card-header">
-        <div class="card-title">
-          <span class="icon">🔍</span>
-          <h2>Código del Trigger para Defender en la Práctica</h2>
-        </div>
-        <span class="badge-oracle">PL/SQL nativo de Oracle</span>
-      </div>
-      <div class="card-body">
-        <p class="defense-desc">
-          Este es el código exacto implementado en el archivo <code>farmacia_carol_db.sql</code>. Se trata de un disparador <strong>AFTER INSERT</strong> que se activa automáticamente por cada fila insertada en la tabla <code>FACTURAS</code>:
-        </p>
-        <pre class="code-block"><code><span class="kw">CREATE OR REPLACE TRIGGER</span> <span class="trg">TRG_FACTURA_A_CXC</span>
-<span class="kw">AFTER INSERT ON</span> <span class="tbl">FACTURAS</span>
-<span class="kw">FOR EACH ROW</span>
-<span class="kw">BEGIN</span>
-    <span class="cm">-- Si las condiciones de pago indican que es a CRÉDITO:</span>
-    <span class="kw">IF</span> <span class="fn">UPPER</span>(:<span class="var">NEW</span>.condiciones_pago) = <span class="str">'CREDITO'</span> <span class="kw">THEN</span>
-        
-        <span class="cm">-- Lee los datos de la factura e inserta automáticamente la deuda en Cuentas por Cobrar:</span>
-        <span class="kw">INSERT INTO</span> <span class="tbl">CUENTAS_POR_COBRAR</span> (
-            id_cxc,
-            id_factura,
-            id_cliente,
-            fecha_cxc,
-            monto_deuda,
-            estado
-        ) <span class="kw">VALUES</span> (
-            <span class="seq">SEQ_CXC.NEXTVAL</span>,
-            :<span class="var">NEW</span>.id_factura,
-            :<span class="var">NEW</span>.id_cliente,
-            :<span class="var">NEW</span>.fecha_emision,
-            :<span class="var">NEW</span>.monto_total,
-            <span class="str">'PENDIENTE'</span>
-        );
-
-    <span class="cm">-- Si la factura es de CONTADO, el trigger evalúa la condición, no hace nada</span>
-    <span class="cm">-- y no genera ninguna deuda en Cuentas por Cobrar.</span>
-    <span class="kw">END IF</span>;
-<span class="kw">END</span>;
-/</code></pre>
-
-        <div class="defense-points">
-          <div class="point-box">
-            <h4>1. ¿Por qué es AFTER INSERT?</h4>
-            <p>Porque la tabla <code>CUENTAS_POR_COBRAR</code> referencia el <code>id_factura</code> como clave foránea. La factura debe existir ya registrada en la base de datos para que la relación sea válida.</p>
-          </div>
-          <div class="point-box">
-            <h4>2. ¿De dónde saca los datos?</h4>
-            <p>Los extrae directamente de la pseudo-fila <code>:NEW</code> de la factura (<code>:NEW.id_factura</code>, <code>:NEW.id_cliente</code>, <code>:NEW.fecha_emision</code>, <code>:NEW.monto_total</code>).</p>
-          </div>
-          <div class="point-box">
-            <h4>3. ¿Qué pasa si es al Contado?</h4>
-            <p>El bloque <code>IF</code> no se cumple, el trigger finaliza en 0 milisegundos y la tabla de Cuentas por Cobrar permanece intacta.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
   </main>
 
-  <!-- Toast de Notificaciones -->
   <div class="toast-container" id="toastContainer"></div>
 
   <script src="farmacia_carol.js"></script>
