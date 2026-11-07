@@ -74,7 +74,22 @@ El **Data Warehouse Corporativo (`DWH_Corporativo_ISO810`)** integra en un únic
 
 ---
 
-## 🧪 4. Cómo Poner a Prueba el Data Warehouse
+## 🔌 4. Conectividad Total: Cómo se Conectan las 4 Empresas al DWH
+
+Cada una de las cuatro empresas del portafolio se conecta al DWH mediante un conector especializado que implementa su respectiva tecnología propietaria:
+
+| Empresa / Negocio | Tecnología de Conexión | Objeto de Integración / Script | Destino en el DWH |
+| :--- | :--- | :--- | :--- |
+| **1. Supermercados Bravo** | **Linked Server (`SRV_RH_BRAVO`)** | `edw.sp_Sincronizar_Supermercado_Bravo` | `Dim_Empleado` (SCD 2) + `Fact_Nomina_Gestion` |
+| **2. Farmacia Carol** | **Vistas de Enlace / Triggers OLTP** | `edw.sp_Sincronizar_Farmacia_Carol` | `Dim_Cliente` + `Fact_Facturacion_CxC` |
+| **3. Ferretería Americana** | **Servicio Web SOAP / XML XQuery** | `edw.sp_Sincronizar_Ferreteria_Americana` | `Fact_Aportes_TSS` (SUIR Plus) |
+| **4. MADECO** | **XML Contable / XQuery Parsing** | `edw.sp_Sincronizar_MADECO` | `Fact_Movimientos_Contables` + `Fact_Depreciacion_Activos` |
+
+> 🚀 **Script de Conectividad Integral:** Ejecuta [`dwh_conectividad_total.sql`](file:///c:/Users/Eitha/OneDrive/Desktop/ISO810/dwh_conectividad_total.sql) para conectar las 4 empresas y sincronizar los datos de golpe con `EXEC edw.sp_Sincronizar_Todos_Los_Sistemas;`.
+
+---
+
+## 🧪 5. Cómo Poner a Prueba el Data Warehouse
 
 Para validar que todo el DWH esté correctamente estructurado, íntegro y sin errores, se proporcionan dos scripts SQL listos para ejecutar en **SQL Server Management Studio (SSMS)**, **Azure Data Studio** o mediante **sqlcmd**:
 
