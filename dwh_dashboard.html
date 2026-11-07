@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>DWH Corporativo ISO810 — Dashboard Ejecutivo</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --primary: #38bdf8;
+      --success: #4ade80;
+      --warning: #facc15;
+      --danger: #f87171;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 24px; }
+    header { margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+    h1 { font-size: 1.5rem; color: var(--primary); }
+    .badge { background: #0369a1; color: white; padding: 4px 10px; border-radius: 9999px; font-size: 0.75rem; }
+    .grid-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .kpi-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .kpi-title { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+    .kpi-val { font-size: 1.5rem; font-weight: bold; }
+    .kpi-sub { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .tab-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+    .tab-btn.active { background: var(--primary); color: #000; font-weight: bold; border-color: var(--primary); }
+    .table-container { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
+    th { background: #1e293b; padding: 12px; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+    td { padding: 12px; border-bottom: 1px solid var(--border); }
+    tr:hover { background: rgba(255,255,255,0.02); }
+    .status-badge { padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+    .status-ok { background: rgba(74, 222, 128, 0.15); color: var(--success); }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>DWH Corporativo — ISO810</h1>
+      <p style="color: var(--muted); font-size: 0.85rem; margin-top: 4px;">Integración de 4 Dominios: Carol (CxC), Bravo (RH), Americana (TSS) y MADECO (Contabilidad)</p>
+    </div>
+    <span class="badge">Esquema Dimensional Kimball</span>
+  </header>
+
+  <div class="grid-kpis">
+    <div class="kpi-card">
+      <div class="kpi-title">Facturación Total (Carol)</div>
+      <div class="kpi-val" style="color: var(--primary);">RD$ 30,916.00</div>
+      <div class="kpi-sub">Crédito: RD$ 29,500.00 | Contado: RD$ 1,416.00</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Nómina Bruta (Bravo)</div>
+      <div class="kpi-val" style="color: var(--warning);">RD$ 97,000.00</div>
+      <div class="kpi-sub">Horas Extras: 20 hrs (RD$ 7,400.00)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Aportes Patronales TSS (Americana)</div>
+      <div class="kpi-val" style="color: var(--danger);">RD$ 7,357.00</div>
+      <div class="kpi-sub">SFS (7.09%) + AFP (7.10%) + SRL + INFOTEP</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Balance Activos (MADECO)</div>
+      <div class="kpi-val" style="color: var(--success);">RD$ 2,760,000.00</div>
+      <div class="kpi-sub">Depreciación Mensual: RD$ 57,500.00</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="mostrarSeccion('cxc')">Farmacia Carol (CxC)</button>
+    <button class="tab-btn" onclick="mostrarSeccion('rh')">Bravo (RH & Nómina)</button>
+    <button class="tab-btn" onclick="mostrarSeccion('tss')">Americana (TSS)</button>
+    <button class="tab-btn" onclick="mostrarSeccion('contable')">MADECO (Contabilidad)</button>
+    <button class="tab-btn" onclick="mostrarSeccion('test')">Batería de Pruebas (Test Suite)</button>
+  </div>
+
+  <div id="sec-cxc" class="table-container">
+    <table>
+      <thead>
+        <tr><th>Factura</th><th>Cliente</th><th>Condición</th><th>Subtotal</th><th>ITBIS (18%)</th><th>Total</th><th>Pendiente CxC</th><th>Estado</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>B0100001045</td><td>ARS Primera Humano</td><td>CREDITO</td><td>RD$ 25,000.00</td><td>RD$ 4,500.00</td><td>RD$ 29,500.00</td><td>RD$ 29,500.00</td><td><span class="status-badge" style="background: rgba(250, 204, 21, 0.15); color: var(--warning);">PENDIENTE</span></td></tr>
+        <tr><td>B0200004512</td><td>Juan Pérez Gómez</td><td>CONTADO</td><td>RD$ 1,200.00</td><td>RD$ 216.00</td><td>RD$ 1,416.00</td><td>RD$ 0.00</td><td><span class="status-badge status-ok">PAGADA</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="sec-rh" class="table-container" style="display:none;">
+    <table>
+      <thead>
+        <tr><th>Colaborador</th><th>Cargo / Departamento</th><th>Sucursal</th><th>Salario Base</th><th>H. Extras</th><th>Total Pagado</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>María Isabel García Rodríguez</td><td>Cajera Principal / Cajas</td><td>Bravo Churchill</td><td>RD$ 45,000.00</td><td>12 hrs (RD$ 4,200.00)</td><td>RD$ 49,545.00</td></tr>
+        <tr><td>Pedro José Martínez Peña</td><td>Supervisor / Almacén</td><td>Bravo Núñez de Cáceres</td><td>RD$ 52,000.00</td><td>8 hrs (RD$ 3,200.00)</td><td>RD$ 54,632.00</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="sec-tss" class="table-container" style="display:none;">
+    <table>
+      <thead>
+        <tr><th>Empleado</th><th>Salario Cotizable</th><th>SFS Patrono</th><th>AFP Patrono</th><th>SRL</th><th>INFOTEP (1%)</th><th>Total Aporte</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>María Isabel García Rodríguez</td><td>RD$ 45,000.00</td><td>RD$ 3,195.00</td><td>RD$ 3,217.50</td><td>RD$ 495.00</td><td>RD$ 450.00</td><td>RD$ 7,357.50</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="sec-contable" class="table-container" style="display:none;">
+    <table>
+      <thead>
+        <tr><th>No. Asiento</th><th>Cuenta Contable</th><th>Descripción</th><th>Tipo</th><th>Débito</th><th>Crédito</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>AF-2026-000123</td><td>6-1-05-001</td><td>Gasto depreciación maquinaria</td><td>DB</td><td>RD$ 45,000.00</td><td>RD$ 0.00</td></tr>
+        <tr><td>AF-2026-000123</td><td>6-1-05-002</td><td>Gasto depreciación vehículos</td><td>DB</td><td>RD$ 12,500.00</td><td>RD$ 0.00</td></tr>
+        <tr><td>AF-2026-000123</td><td>1-2-09-001</td><td>Depreciación acumulada maquinaria</td><td>CR</td><td>RD$ 0.00</td><td>RD$ 45,000.00</td></tr>
+        <tr><td>AF-2026-000123</td><td>1-2-09-002</td><td>Depreciación acumulada vehículos</td><td>CR</td><td>RD$ 0.00</td><td>RD$ 12,500.00</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="sec-test" class="table-container" style="display:none;">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Dominio</th><th>Prueba</th><th>Criterio Evaluado</th><th>Resultado</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Bravo</td><td>Consistencia SCD Tipo 2</td><td>Un solo registro activo por empleado</td><td><span class="status-badge status-ok">APROBADO</span></td></tr>
+        <tr><td>2</td><td>Bravo</td><td>Coherencia Salarial</td><td>Neto acorde a ingresos brutos</td><td><span class="status-badge status-ok">APROBADO</span></td></tr>
+        <tr><td>3</td><td>Carol</td><td>Integridad Referencial CxC</td><td>Sin facturas huérfanas sin cliente</td><td><span class="status-badge status-ok">APROBADO</span></td></tr>
+        <tr><td>4</td><td>Carol</td><td>Cálculo Impositivo ITBIS</td><td>Subtotal + ITBIS (18%) = Total</td><td><span class="status-badge status-ok">APROBADO</span></td></tr>
+        <tr><td>5</td><td>Americana</td><td>Aportes Patronales TSS</td><td>SFS y AFP estrictamente positivos</td><td><span class="status-badge status-ok">APROBADO</span></td></tr>
+        <tr><td>6</td><td>MADECO</td><td>Partida Doble</td><td>Débito = Crédito (Diferencia = RD$ 0.00)</td><td><span class="status-badge status-ok">APROBADO</span></td></tr>
+        <tr><td>7</td><td>MADECO</td><td>No Negatividad de Activos</td><td>Valor en libros >= 0</td><td><span class="status-badge status-ok">APROBADO</span></td></tr>
+        <tr><td>8</td><td>BI</td><td>Disponibilidad de Vistas</td><td>Vistas ejecutivas devuelven métricas</td><td><span class="status-badge status-ok">APROBADO</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    function mostrarSeccion(id) {
+      document.querySelectorAll('.table-container').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('sec-' + id).style.display = 'block';
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>
